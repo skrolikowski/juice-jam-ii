@@ -1,0 +1,18 @@
+{
+    "code-runner.clearPreviousOutput": true,
+    "code-runner.enableAppInsights": false,
+    "code-runner.showExecutionMessage": true,
+    "code-runner.customCommand": "",
+    "code-runner.defaultLanguage": "lua",
+    "code-runner.executorMap": {
+        "lua": "/Applications/love.app/Contents/MacOS/love $workspaceRoot"
+    },
+    "code-runner.saveFileBeforeRun": true,
+    "code-runner.saveAllFilesBeforeRun": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.workspace.library": [
+        "${3rd}/love2d/library"
+    ]
+}
