@@ -70,8 +70,8 @@ function love.draw()
     lg.draw(Config.image.bg)
 
 
-    lg.stencil(reelStencil, "replace", 1)
-    lg.setStencilTest("greater", 0)
+    -- lg.stencil(reelStencil, "replace", 1)
+    -- lg.setStencilTest("greater", 0)
     --
     --
     lg.push()
@@ -84,7 +84,7 @@ function love.draw()
     lg.pop()
     --
     --
-    lg.setStencilTest()
+    -- lg.setStencilTest()
 end
 
 function love.resize()

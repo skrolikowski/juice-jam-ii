@@ -7,12 +7,10 @@ function M:init(data)
     self.row  = data.row
 
     -- symbol
-    local choice = Util.RandChoice("apple", "bag", "beer", "belt", "bread", "cheese", "fish", "helm")
-    self.symbol = Config.image.symbol[choice]
-
-    local x, y = self:center()
-    local w, h = self.symbol:getDimensions()
-    self.transform = lx.newTransform(x - w, y - h, 0, 2, 2)
+    -- local choice = Util.RandChoice("apple", "bag", "beer", "belt", "bread", "cheese", "fish", "helm")
+    local choice = { "apple", "bag", "beer", "belt", "cheese" }
+    local symbol = choice[self.row]
+    self.symbol = Config.image.symbol[symbol]
 end
 
 function M:update(dt)
@@ -26,8 +24,10 @@ function M:draw()
     lg.setColor(Config.color.black)
     lg.rectangle('line', self:container())
 
+    local cx, cy = self:center()
+    local x, y, w, h = self:container()
     lg.setColor(Config.color.white)
-    lg.draw(self.symbol, self.transform)
+    lg.draw(self.symbol, cx - w * 0.3, cy - h * 0.3, 0, 2, 2)
 end
 
 --
@@ -80,7 +80,13 @@ function M:incrementRow()
 
     if self.row > Config.reel.numTiles then
         self.row = 1
+
+        local symbol = Util.RandChoice("apple", "bag", "beer", "belt", "bread", "cheese", "fish", "helm")
+        -- local choice = { "apple", "bag", "beer", "belt", "cheese" }
+        -- local symbol = choice[self.row]
+        self.symbol = Config.image.symbol[symbol]
     end
+
 end
 
 return M

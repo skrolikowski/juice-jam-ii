@@ -7,8 +7,6 @@ Config = {
     tile = {
         width = 100,
         height = 100,
-        padX = 5,
-        padY = 5,
     },
     color = {
         tile  = { 0, 0, 0, 0.25 },

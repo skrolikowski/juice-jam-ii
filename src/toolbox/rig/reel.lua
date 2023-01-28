@@ -8,7 +8,6 @@ function M:init(data)
     self.tiles       = {}
     --
     self.isSpinning  = false
-    self.requestSpin = false
     self.requestStop = false
 
     -- create tiles
@@ -72,43 +71,49 @@ function M:triggerSpin()
     if self.isSpinning then
         self.requestStop = true
     else
+        self.isSpinning  = true
         self.requestStop = false
-        self:spin()
+        self:spin(true)
     end
 end
 
-function M:spin()
-    local duration = 0.5
-    local subject  = self.pos
-    local target   = { y = self.pos.y + Config.tile.height }
-    local ease     = "in-quad"
-
-    self.isSpinning = true
-
-    self.tween = Timer.tween(duration, subject, target, ease, function()
-        self:postSpin()
-    end)
-end
-
-function M:fullspin()
-    local duration = 0.25
+function M:spin(isInit)
+    local duration = 1
     local subject  = self.pos
     local target   = { y = self.pos.y + Config.tile.height }
     local ease     = "linear"
 
+    if isInit then
+        ease = "in-quad"
+    end
+
+    -- tween
     self.tween = Timer.tween(duration, subject, target, ease, function()
-        self:postSpin()
+        --
+        -- reset reel position..
+        self.pos.y = self.pos.y - Config.tile.height
+
+        -- adjust tiles..
+        for _, tile in pairs(self.tiles) do
+            tile:incrementRow()
+        end
+
+        -- continue/stop spinning..
+        if self.requestStop then
+            self:stopSpin()
+        else
+            self:spin(false)
+        end
     end)
 end
 
 function M:stopSpin()
-    local duration = 0.5
+    local duration = 1
     local subject  = self.pos
     local target   = { y = self.pos.y + Config.tile.height }
-    local ease     = "in-bounce"
+    local ease     = "out-quad"
 
-    Timer.cancel(self.tween)
-    --
+    -- tween
     self.tween = Timer.tween(duration, subject, target, ease, function()
         --
         -- reset reel position..
@@ -122,24 +127,6 @@ function M:stopSpin()
         -- stopped spinning..
         self.isSpinning = false
     end)
-end
-
-function M:postSpin()
-    --
-    -- reset reel position..
-    self.pos.y = self.pos.y - Config.tile.height
-
-    -- adjust tiles..
-    for _, tile in pairs(self.tiles) do
-        tile:incrementRow()
-    end
-
-    -- continue/stop spinning..
-    if self.requestStop then
-        self:stopSpin()
-    else
-        self:fullspin()
-    end
 end
 
 return M
