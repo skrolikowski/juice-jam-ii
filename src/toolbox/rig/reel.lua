@@ -69,7 +69,7 @@ end
 
 function M:triggerSpin()
     if self.isSpinning then
-        self.remSpins = 8
+        self.remSpins = #Config.reel.spinDurationOut
     else
         self.isSpinning = true
         self.numSpins = 1
@@ -86,7 +86,7 @@ function M:spin()
     local ease     = Config.reel.spinEase
 
     -- number of spins..?
-    if self.numSpins > 0 and self.numSpins < 5 then
+    if self.numSpins > 0 and self.numSpins <= #Config.reel.spinDurationIn then
         duration = Config.reel.spinDurationIn[self.numSpins]
 
         if self.numSpins == 1 then
@@ -95,7 +95,7 @@ function M:spin()
     end
 
     -- remaining spins..?
-    if self.remSpins > 0 and self.remSpins <= 8 then
+    if self.remSpins > 0 and self.remSpins <= #Config.reel.spinDurationOut then
         duration = Config.reel.spinDurationOut[self.remSpins]
 
         if self.remSpins == 1 then
