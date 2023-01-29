@@ -1,8 +1,16 @@
 Config = {
     width = lg.getWidth(),
     height = lg.getHeight(),
+    rig = {
+        numReels = 10,
+        showingRows = 5,
+    },
     reel = {
-        numTiles = 5
+        numTiles        = 7,
+        spinEase        = "linear",
+        spinDuration    = 0.01,
+        spinDurationIn  = { 0.5, 0.2, 0.1, 0.05, 0.03 },
+        spinDurationOut = { 0.5, 0.3, 0.2, 0.1, 0.08, 0.05, 0.03, 0.02 }
     },
     tile = {
         width = 100,

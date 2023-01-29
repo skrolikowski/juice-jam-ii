@@ -7,9 +7,9 @@ function M:init(data)
     self.row  = data.row
 
     -- symbol
-    -- local choice = Util.RandChoice("apple", "bag", "beer", "belt", "bread", "cheese", "fish", "helm")
-    local choice = { "apple", "bag", "beer", "belt", "cheese" }
-    local symbol = choice[self.row]
+    local symbol = Util.RandChoice("apple", "bag", "beer", "belt", "bread", "cheese", "fish", "helm")
+    -- local choice = { "apple", "bag", "beer", "belt", "cheese" }
+    -- local symbol = choice[self.row]
     self.symbol = Config.image.symbol[symbol]
 end
 
@@ -35,7 +35,7 @@ end
 --
 
 function M:center()
-    return 0, (self.row - 1) * Config.tile.height
+    return Config.tile.width * 0.5, (self.row - 1) * Config.tile.height + Config.tile.height * 0.5
 end
 
 function M:size()

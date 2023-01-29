@@ -3,12 +3,12 @@
 local M = Class {}
 
 function M:init(data)
-    self.index       = data.index
-    self.pos         = Vec2((self.index - 1) * Config.tile.width, 0)
-    self.tiles       = {}
-    --
-    self.isSpinning  = false
-    self.requestStop = false
+    local cx = (data.index - 1) * Config.tile.width + Config.tile.width * 0.5
+    local cy = Config.reel.numTiles * Config.tile.height * 0.5
+
+    self.index = data.index
+    self.pos   = Vec2(cx, cy)
+    self.tiles = {}
 
     -- create tiles
     for i = 1, Config.reel.numTiles do
@@ -42,7 +42,7 @@ function M:center()
 end
 
 function M:size()
-    return Config.tile.width, #self.tiles * Config.tile.height
+    return Config.tile.width, Config.reel.numTiles * Config.tile.height
 end
 
 function M:position()
@@ -69,27 +69,49 @@ end
 
 function M:triggerSpin()
     if self.isSpinning then
-        self.requestStop = true
+        self.remSpins = 8
     else
-        self.isSpinning  = true
-        self.requestStop = false
-        self:spin(true)
+        self.isSpinning = true
+        self.numSpins = 1
+        self.remSpins = 0
+        --
+        self:spin()
     end
 end
 
-function M:spin(isInit)
-    local duration = 1
+function M:spin()
+    local duration = Config.reel.spinDuration
     local subject  = self.pos
     local target   = { y = self.pos.y + Config.tile.height }
-    local ease     = "linear"
+    local ease     = Config.reel.spinEase
 
-    if isInit then
-        ease = "in-quad"
+    -- number of spins..?
+    if self.numSpins > 0 and self.numSpins < 5 then
+        duration = Config.reel.spinDurationIn[self.numSpins]
+
+        if self.numSpins == 1 then
+            ease = "in-back"
+        end
+    end
+
+    -- remaining spins..?
+    if self.remSpins > 0 and self.remSpins <= 8 then
+        duration = Config.reel.spinDurationOut[self.remSpins]
+
+        if self.remSpins == 1 then
+            ease = "out-back"
+            --
+            self.isSpinning = false
+        end
     end
 
     -- tween
     self.tween = Timer.tween(duration, subject, target, ease, function()
         --
+        -- update spin counters..
+        self.numSpins = self.numSpins + 1
+        self.remSpins = self.remSpins - 1
+
         -- reset reel position..
         self.pos.y = self.pos.y - Config.tile.height
 
@@ -98,34 +120,10 @@ function M:spin(isInit)
             tile:incrementRow()
         end
 
-        -- continue/stop spinning..
-        if self.requestStop then
-            self:stopSpin()
-        else
-            self:spin(false)
+        -- continue spinning..
+        if self.isSpinning then
+            self:spin()
         end
-    end)
-end
-
-function M:stopSpin()
-    local duration = 1
-    local subject  = self.pos
-    local target   = { y = self.pos.y + Config.tile.height }
-    local ease     = "out-quad"
-
-    -- tween
-    self.tween = Timer.tween(duration, subject, target, ease, function()
-        --
-        -- reset reel position..
-        self.pos.y = self.pos.y - Config.tile.height
-
-        -- adjust tiles..
-        for _, tile in pairs(self.tiles) do
-            tile:incrementRow()
-        end
-
-        -- stopped spinning..
-        self.isSpinning = false
     end)
 end
 

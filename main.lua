@@ -30,28 +30,35 @@ Timer  = require "lib.hump.timer"
 -- local packages..
 require 'src.toolbox'
 
-local reels, reelStencil
+local reels = {}
+local reelStencil
+local cx = Config.width * 0.5 - Config.rig.numReels * 0.5 * Config.tile.width
+local cy = Config.height * 0.5 - Config.reel.numTiles * 0.5 * Config.tile.height
 
 -- Load Game
 --
 function love.load()
     _Event = Event()
     --
-    reels = {
-        Reel({ index = 1 }),
-        Reel({ index = 2 }),
-    }
+    -- create reels
+    for i = 1, Config.rig.numReels do
+        table.insert(reels, Reel({ index = i }))
+    end
+
+
     reelStencil = function()
-        lg.push()
+        local x = 0
+        local y = Config.tile.height * (Config.reel.numTiles - Config.rig.showingRows) * 0.5
+        local w = Config.tile.width * Config.rig.numReels
+        local h = Config.tile.width * Config.rig.showingRows
+
+        lg.rectangle("fill", x, y, w, h)
+        -- -Config.tile.width * Config.rig.numReels * 0.5,
+        -- -Config.tile.height * Config.rig.showingRows * 0.5,
+        -- Config.tile.width * Config.rig.showingRows,
+        -- Config.tile.height * Config.rig.showingRows)
         --
-        lg.translate(Config.width * 0.5, Config.height * 0.5)
-        lg.rectangle("fill",
-            -Config.tile.width * 2,
-            -Config.tile.height * 2,
-            Config.tile.width * 3,
-            Config.tile.height * 3)
-        --
-        lg.pop()
+        -- lg.pop()
     end
 end
 
@@ -70,21 +77,19 @@ function love.draw()
     lg.draw(Config.image.bg)
 
 
-    -- lg.stencil(reelStencil, "replace", 1)
-    -- lg.setStencilTest("greater", 0)
-    --
-    --
     lg.push()
-    lg.translate(Config.width * 0.5, Config.height * 0.5)
+    lg.translate(cx, cy)
+    --
+    lg.stencil(reelStencil, "replace", 1)
+    lg.setStencilTest("greater", 0)
     --
     for _, reel in pairs(reels) do
         reel:draw()
     end
     --
+    lg.setStencilTest()
+    --
     lg.pop()
-    --
-    --
-    -- lg.setStencilTest()
 end
 
 function love.resize()
