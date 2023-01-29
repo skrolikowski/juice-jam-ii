@@ -7,27 +7,42 @@ function M:init(data)
     self.row  = data.row
 
     -- symbol
-    local symbol = Util.RandChoice("apple", "bag", "beer", "belt", "bread", "cheese", "fish", "helm")
-    -- local choice = { "apple", "bag", "beer", "belt", "cheese" }
-    -- local symbol = choice[self.row]
-    self.symbol = Config.image.symbol[symbol]
-end
+    self.symbolIndex = math.random(#Config.image.symbol)
 
-function M:update(dt)
+    -- Dev-note:
+    -- First reel cannot have wild symbol
+    if self.reel == 1 and self.symbolIndex == Config.rig.wildSymbolIndex then
+        self.symbolIndex = 1
+    end
+
+    self.symbol       = Config.image.symbol[self.symbolIndex]
+    self.symbolWidth  = self.symbol:getWidth()
+    self.symbolHeight = self.symbol:getHeight()
+    self.symbolScale  = Vec2(Config.tile.symbolScale, Config.tile.symbolScale)
 
 end
 
 function M:draw()
+    -- draw background
     lg.setColor(Config.color.tile)
     lg.rectangle('fill', self:container())
 
     lg.setColor(Config.color.black)
     lg.rectangle('line', self:container())
 
-    local cx, cy = self:center()
-    local x, y, w, h = self:container()
+    -- draw symbol
+    lg.push()
+    lg.translate(self:center())
+    --
     lg.setColor(Config.color.white)
-    lg.draw(self.symbol, cx - w * 0.3, cy - h * 0.3, 0, 2, 2)
+    lg.draw(self.symbol,
+        -self.symbolWidth * self.symbolScale.x * 0.5,
+        -self.symbolHeight * self.symbolScale.y * 0.5,
+        0,
+        self.symbolScale.x,
+        self.symbolScale.y)
+    --
+    lg.pop()
 end
 
 --
@@ -75,18 +90,21 @@ end
 -- METHODS
 --
 
-function M:incrementRow()
-    self.row = self.row + 1
+function M:setRow(row)
+    self.row = row
 
-    if self.row > Config.reel.numTiles then
-        self.row = 1
+    if self.row == 1 then
+        -- select new symbol..
+        self.symbolIndex = math.random(#Config.image.symbol)
 
-        local symbol = Util.RandChoice("apple", "bag", "beer", "belt", "bread", "cheese", "fish", "helm")
-        -- local choice = { "apple", "bag", "beer", "belt", "cheese" }
-        -- local symbol = choice[self.row]
-        self.symbol = Config.image.symbol[symbol]
+        -- Dev-note:
+        -- First reel cannot have wild symbol
+        if self.reel == 1 and self.symbolIndex == Config.rig.wildSymbolIndex then
+            self.symbolIndex = 1
+        end
+
+        self.symbol = Config.image.symbol[self.symbolIndex]
     end
-
 end
 
 return M

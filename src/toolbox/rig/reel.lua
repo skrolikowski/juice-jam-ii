@@ -4,21 +4,15 @@ local M = Class {}
 
 function M:init(data)
     local cx = (data.index - 1) * Config.tile.width + Config.tile.width * 0.5
-    local cy = Config.reel.numTiles * Config.tile.height * 0.5
+    local cy = Config.rig.numRows * Config.tile.height * 0.5
 
     self.index = data.index
     self.pos   = Vec2(cx, cy)
     self.tiles = {}
 
     -- create tiles
-    for i = 1, Config.reel.numTiles do
+    for i = 1, Config.rig.numRows do
         table.insert(self.tiles, Tile({ reel = self.index, row = i }))
-    end
-end
-
-function M:update(dt)
-    for _, tile in pairs(self.tiles) do
-        tile:update(dt)
     end
 end
 
@@ -42,7 +36,7 @@ function M:center()
 end
 
 function M:size()
-    return Config.tile.width, Config.reel.numTiles * Config.tile.height
+    return Config.tile.width, Config.rig.numRows * Config.tile.height
 end
 
 function M:position()
@@ -116,8 +110,11 @@ function M:spin()
         self.pos.y = self.pos.y - Config.tile.height
 
         -- adjust tiles..
-        for _, tile in pairs(self.tiles) do
-            tile:incrementRow()
+        local last = table.remove(self.tiles)
+        table.insert(self.tiles, 1, last)
+        --
+        for i, tile in pairs(self.tiles) do
+            tile:setRow(i)
         end
 
         -- continue spinning..

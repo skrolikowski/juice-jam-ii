@@ -20,6 +20,9 @@ require 'src.config'
 lg.setDefaultFilter('nearest', 'nearest')
 -- random seed
 math.randomseed(os.time())
+--
+Config.audio.bgLoop:play()
+Config.audio.bgLoop:setLooping(true)
 
 -- lib packages..
 pprint = require "lib.pprint.pprint"
@@ -46,8 +49,6 @@ end
 --
 function love.update(dt)
     Timer.update(dt)
-    --
-    rig:update(dt)
 end
 
 function love.draw()
@@ -79,11 +80,6 @@ function love.keypressed(key)
         rig:trigger()
     elseif key == "1" then
         rig:shake()
-        -- local ox, oy = rig.reels[1].pos:unpack()
-        -- Timer.during(1, function()
-        --     rig.reels[1].pos.x = ox + math.random(-3, 3)
-        --     rig.reels[1].pos.y = oy + math.random(-3, 3)
-        -- end)
     end
 end
 
