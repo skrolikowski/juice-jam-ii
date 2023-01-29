@@ -67,16 +67,16 @@ end
 -- METHODS
 --
 
-function M:triggerSpin()
-    if self.isSpinning then
-        self.remSpins = #Config.reel.spinDurationOut
-    else
-        self.isSpinning = true
-        self.numSpins = 1
-        self.remSpins = 0
-        --
-        self:spin()
-    end
+function M:startSpin()
+    self.isSpinning = true
+    self.numSpins = 1
+    self.remSpins = 0
+    --
+    self:spin()
+end
+
+function M:stopSpin()
+    self.remSpins = #Config.reel.spinDurationOut
 end
 
 function M:spin()

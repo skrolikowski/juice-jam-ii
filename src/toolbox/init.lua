@@ -17,6 +17,7 @@ Vec2 = require 'src.toolbox.math.Vec2'
 Event = require 'src.toolbox.behavior.event'
 
 --
+Rig  = require 'src.toolbox.rig.rig'
 Reel = require 'src.toolbox.rig.reel'
 Tile = require 'src.toolbox.rig.tile'
 

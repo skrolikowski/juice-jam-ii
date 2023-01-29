@@ -23,6 +23,7 @@ math.randomseed(os.time())
 
 -- lib packages..
 pprint = require "lib.pprint.pprint"
+Camera = require "lib.hump.camera"
 Class  = require "lib.hump.class"
 Timer  = require "lib.hump.timer"
 -- Gamestate = require "lib.hump.gamestate"
@@ -30,36 +31,15 @@ Timer  = require "lib.hump.timer"
 -- local packages..
 require 'src.toolbox'
 
-local reels = {}
-local reelStencil
-local cx = Config.width * 0.5 - Config.rig.numReels * 0.5 * Config.tile.width
-local cy = Config.height * 0.5 - Config.reel.numTiles * 0.5 * Config.tile.height
+local camera, rig
 
 -- Load Game
 --
 function love.load()
     _Event = Event()
     --
-    -- create reels
-    for i = 1, Config.rig.numReels do
-        table.insert(reels, Reel({ index = i }))
-    end
-
-
-    reelStencil = function()
-        local x = 0
-        local y = Config.tile.height * (Config.reel.numTiles - Config.rig.showingRows) * 0.5
-        local w = Config.tile.width * Config.rig.numReels
-        local h = Config.tile.width * Config.rig.showingRows
-
-        lg.rectangle("fill", x, y, w, h)
-        -- -Config.tile.width * Config.rig.numReels * 0.5,
-        -- -Config.tile.height * Config.rig.showingRows * 0.5,
-        -- Config.tile.width * Config.rig.showingRows,
-        -- Config.tile.height * Config.rig.showingRows)
-        --
-        -- lg.pop()
-    end
+    camera = Camera(Config.width * 0.5, Config.height * 0.5)
+    rig = Rig()
 end
 
 -- Update Timer
@@ -67,29 +47,18 @@ end
 function love.update(dt)
     Timer.update(dt)
     --
-    for _, reel in pairs(reels) do
-        reel:update(dt)
-    end
+    rig:update(dt)
 end
 
 function love.draw()
     lg.setColor(Config.color.white)
     lg.draw(Config.image.bg)
 
-
-    lg.push()
-    lg.translate(cx, cy)
+    camera:attach()
     --
-    lg.stencil(reelStencil, "replace", 1)
-    lg.setStencilTest("greater", 0)
+    rig:draw()
     --
-    for _, reel in pairs(reels) do
-        reel:draw()
-    end
-    --
-    lg.setStencilTest()
-    --
-    lg.pop()
+    camera:detach()
 end
 
 function love.resize()
@@ -104,12 +73,17 @@ function love.keypressed(key)
     _Event:Dispatch('key_' .. key)
     --
 
-    if key == 'escape' then
+    if key == "escape" then
         love.event.quit()
-    elseif key == 'space' then
-        for _, reel in pairs(reels) do
-            reel:triggerSpin()
-        end
+    elseif key == "space" then
+        rig:trigger()
+    elseif key == "1" then
+        rig:shake()
+        -- local ox, oy = rig.reels[1].pos:unpack()
+        -- Timer.during(1, function()
+        --     rig.reels[1].pos.x = ox + math.random(-3, 3)
+        --     rig.reels[1].pos.y = oy + math.random(-3, 3)
+        -- end)
     end
 end
 
