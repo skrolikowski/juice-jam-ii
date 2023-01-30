@@ -5,21 +5,8 @@ local M = Class {}
 function M:init(data)
     self.reel = data.reel
     self.row  = data.row
-
-    -- symbol
-    self.symbolIndex = math.random(#Config.image.symbol)
-
-    -- Dev-note:
-    -- First reel cannot have wild symbol
-    if self.reel == 1 and self.symbolIndex == Config.rig.wildSymbolIndex then
-        self.symbolIndex = 1
-    end
-
-    self.symbol       = Config.image.symbol[self.symbolIndex]
-    self.symbolWidth  = self.symbol:getWidth()
-    self.symbolHeight = self.symbol:getHeight()
-    self.symbolScale  = Vec2(Config.tile.symbolScale, Config.tile.symbolScale)
-
+    --
+    self:setNewSymbol()
 end
 
 function M:draw()
@@ -50,11 +37,11 @@ end
 --
 
 function M:center()
-    return Config.tile.width * 0.5, (self.row - 1) * Config.tile.height + Config.tile.height * 0.5
+    return Config.tile.size * 0.5, (self.row - 1) * Config.tile.size + Config.tile.size * 0.5
 end
 
 function M:size()
-    return Config.tile.width, Config.tile.height
+    return Config.tile.size, Config.tile.size
 end
 
 function M:position()
@@ -94,17 +81,26 @@ function M:setRow(row)
     self.row = row
 
     if self.row == 1 then
-        -- select new symbol..
-        self.symbolIndex = math.random(#Config.image.symbol)
-
-        -- Dev-note:
-        -- First reel cannot have wild symbol
-        if self.reel == 1 and self.symbolIndex == Config.rig.wildSymbolIndex then
-            self.symbolIndex = 1
-        end
-
-        self.symbol = Config.image.symbol[self.symbolIndex]
+        self:setNewSymbol()
     end
+end
+
+function M:setNewSymbol()
+    local weights
+    if self.reel == 1 then
+        weights = Config.rig.symbolWeightsReelOne
+    else
+        weights = Config.rig.symbolWeights
+    end
+
+    local _, randIndex = Util.WeightedChoice(weights)
+
+    --
+    self.symbolIndex  = randIndex
+    self.symbol       = Config.image.symbol[self.symbolIndex]
+    self.symbolWidth  = self.symbol:getWidth()
+    self.symbolHeight = self.symbol:getHeight()
+    self.symbolScale  = Vec2(Config.tile.scale, Config.tile.scale)
 end
 
 return M

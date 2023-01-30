@@ -3,8 +3,8 @@
 local M = Class {}
 
 function M:init(data)
-    local cx = (data.index - 1) * Config.tile.width + Config.tile.width * 0.5
-    local cy = Config.rig.numRows * Config.tile.height * 0.5
+    local cx = (data.index - 1) * Config.tile.size + Config.tile.size * 0.5
+    local cy = Config.rig.numRows * Config.tile.size * 0.5
 
     self.index = data.index
     self.pos   = Vec2(cx, cy)
@@ -36,7 +36,7 @@ function M:center()
 end
 
 function M:size()
-    return Config.tile.width, Config.rig.numRows * Config.tile.height
+    return Config.tile.size, Config.rig.numRows * Config.tile.size
 end
 
 function M:position()
@@ -76,7 +76,7 @@ end
 function M:spin()
     local duration = Config.reel.spinDuration
     local subject  = self.pos
-    local target   = { y = self.pos.y + Config.tile.height }
+    local target   = { y = self.pos.y + Config.tile.size }
     local ease     = Config.reel.spinEase
 
     -- number of spins..?
@@ -107,7 +107,7 @@ function M:spin()
         self.remSpins = self.remSpins - 1
 
         -- reset reel position..
-        self.pos.y = self.pos.y - Config.tile.height
+        self.pos.y = self.pos.y - Config.tile.size
 
         -- adjust tiles..
         local last = table.remove(self.tiles)

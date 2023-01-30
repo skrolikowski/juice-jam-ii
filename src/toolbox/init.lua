@@ -57,4 +57,27 @@ Util = {
     Clamp = function(val, min, max)
         return math.max(min, math.min(val, max))
     end,
+
+    SumValues = function(tabl)
+        local sum = 0
+
+        for _, value in pairs(tabl) do
+            sum = sum + value
+        end
+
+        return sum
+    end,
+
+    WeightedChoice = function(tabl)
+        local sum      = Util.SumValues(tabl)
+        local index    = 0
+        local selector = math.random() * sum
+
+        while selector > 0 do
+            index    = index + 1
+            selector = selector - tabl[index]
+        end
+
+        return tabl[index], index
+    end
 }
