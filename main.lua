@@ -26,23 +26,25 @@ Config.audio.bgLoop:setLooping(true)
 
 -- lib packages..
 pprint = require "lib.pprint.pprint"
-Camera = require "lib.hump.camera"
+-- Camera = require "lib.hump.camera"
 Class  = require "lib.hump.class"
 Timer  = require "lib.hump.timer"
 -- Gamestate = require "lib.hump.gamestate"
 
 -- local packages..
-require 'src.toolbox'
+require "src.toolbox"
+require "src.ui"
 
-local camera, rig
+local rig
 
 -- Load Game
 --
 function love.load()
     _Event = Event()
+    _UI    = Plan.new()
+    _Game  = require 'src.Game' ()
     --
-    camera = Camera(Config.width * 0.5, Config.height * 0.5)
-    rig = Rig()
+    rig    = Rig()
 end
 
 -- Update Timer
@@ -52,18 +54,21 @@ function love.update(dt)
 end
 
 function love.draw()
+    --
+    -- draw background..
     lg.setColor(Config.color.white)
     lg.draw(Config.image.bg)
 
-    camera:attach()
-    --
+    -- draw rig..
     rig:draw()
-    --
-    camera:detach()
+
+    -- draw ui..
+    _UI:draw()
+    _Game:draw()
 end
 
 function love.resize()
-    -- _UI:refresh()
+    _UI:refresh()
 end
 
 ---- ---- ---- ----
@@ -89,9 +94,9 @@ end
 --     -- _World:OnHover(x, y)
 -- end
 
--- -- Controls - Mouse Pressed
--- --
--- function love.mousepressed(x, y, button)
---     _World:OnClick(x, y, button)
---     -- _UI:emit("mousepressed", x, y, button)
--- end
+-- Controls - Mouse Pressed
+--
+function love.mousepressed(x, y, button)
+    -- _World:OnClick(x, y, button)
+    _UI:emit("mousepressed", x, y, button)
+end
