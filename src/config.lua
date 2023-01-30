@@ -21,18 +21,77 @@ Config = {
     width = lg.getWidth(),
     height = lg.getHeight(),
     rig = {
-        numReels           = 3,
-        numRows            = 5,
-        paylines           = {
-            -- { 2, 2, 2 },
-            { 3, 3, 3 },
-            -- { 4, 4, 4 },
+        numReels             = 5,
+        numRows              = 5,
+        paylines             = {
+            { 2, 2, 2, 2, 2 },
+            { 3, 3, 3, 3, 3 },
+            { 4, 4, 4, 4, 4 },
+            { 2, 3, 4, 3, 2 },
+            { 4, 3, 2, 3, 4 },
+            { 2, 2, 3, 4, 4 },
+            { 4, 4, 3, 2, 2 },
         },
-        winlines           = {
-            [1] = { min = 3, mult = 1 }
+        sequences            = {
+            -- Coin (payout = gold)
+            [1] = { min = 3, payout = 05, value = "gold" },
+            -- Diamond (payout = gold)
+            [2] = { min = 3, payout = 25, value = "gold" },
+            -- Apple (payout = hp)
+            [4] = { min = 3, payout = 10, value = "hp" },
+            -- Slime(payout = -hp)
+            [8] = { min = 3, payout = -10, value = "hp" },
         },
-        scatterSymbolIndex = 3,
-        wildSymbolIndex    = 2
+        scatters             = {
+            [3] = { min = 3, payout = 10, value = "gold" }, -- Chest  (payout = + gold)
+            [5] = { min = 3, payout = 10, value = "hp" }, -- Potion (payout = + hp)
+            [6] = { min = 3, payout = 01, value = "sword" }, -- Sword  (payout = + sword)
+            [7] = { min = 3, payout = 01, value = "shield" }, -- Shield (payout = + shield)
+            [9] = { min = 3, payout = -10, value = "hp" }, -- Skull  (payout = - hp)
+        },
+        wildSymbolIndex      = 14,
+        symbolWeights        = {
+            -- money
+            050, -- Coin    (sequence)
+            025, -- Diamond (sequence)
+            010, -- Chest   (scatter)
+            -- health
+            025, -- Apple   (sequence)
+            010, -- Potion  (scatter)
+            -- tools
+            015, -- Sword   (scatter)
+            015, -- Shield  (scatter)
+            -- enemy
+            025, -- Slime   (sequence)
+            015, -- Skull   (scatter)
+            -- misc
+            005, -- Book
+            005, -- Candle
+            005, -- Feather
+            -- wild
+            010, -- Wild
+        },
+        symbolWeightsReelOne = {
+            -- money
+            033, -- Coin    (sequence)
+            020, -- Diamond (sequence)
+            000, -- Chest   (scatter)
+            -- health
+            020, -- Apple   (sequence)
+            000, -- Potion  (scatter)
+            -- tools
+            000, -- Sword   (scatter)
+            000, -- Shield  (scatter)
+            -- enemy
+            025, -- Slime   (sequence)
+            000, -- Skull   (scatter)
+            -- misc
+            005, -- Book
+            005, -- Candle
+            005, -- Feather
+            -- wild
+            000, -- Wild
+        },
     },
     reel = {
         spinEase        = "linear",
@@ -41,11 +100,11 @@ Config = {
         spinDurationOut = { 0.5, 0.3, 0.2, 0.1, 0.08, 0.05, 0.03, 0.02 }
     },
     tile = {
-        width       = 150,
-        height      = 150,
-        symbolScale = 3
+        size  = lg.getWidth() * 0.1,
+        scale = 3
     },
     color = {
+        panel = ConfigUtil.hex2rgb("3a4a3d", 0.85),
         tile  = ConfigUtil.hex2rgb("3a4a3d", 0.85),
         white = { 1, 1, 1, 1 },
         black = { 0, 0, 0, 1 },
@@ -59,31 +118,26 @@ Config = {
     },
     image = {
         bg = lg.newImage('res/image/bg.png'),
-        symbolName = {
-            "Apple",
-            "Bag",
-            -- "Beer",
-            -- "Bow",
-            -- "Chest",
-            -- "Sword",
-            -- "Helm",
-            -- "Potion",
-            -- "Skull",
-            -- "Slime",
-            -- "String",
-        },
         symbol = {
+            -- money
+            lg.newImage('res/image/symbol/Coin.png'),
+            lg.newImage('res/image/symbol/Diamond.png'),
+            lg.newImage('res/image/symbol/Chest.png'),
+            -- health
             lg.newImage('res/image/symbol/Apple.png'),
-            lg.newImage('res/image/symbol/Bag.png'),
-            -- lg.newImage('res/image/symbol/Beer.png'),
-            -- lg.newImage('res/image/symbol/Bow.png'),
-            -- lg.newImage('res/image/symbol/Chest.png'),
-            -- lg.newImage('res/image/symbol/Golden Sword.png'),
-            -- lg.newImage('res/image/symbol/Helm.png'),
-            -- lg.newImage('res/image/symbol/Red Potion 2.png'),
-            -- lg.newImage('res/image/symbol/Skull.png'),
-            -- lg.newImage('res/image/symbol/Slime Gel.png'),
-            -- lg.newImage('res/image/symbol/String.png'),
+            lg.newImage('res/image/symbol/Potion.png'),
+            -- tools
+            lg.newImage('res/image/symbol/Sword.png'),
+            lg.newImage('res/image/symbol/Shield.png'),
+            -- enemy
+            lg.newImage('res/image/symbol/Slime.png'),
+            lg.newImage('res/image/symbol/Skull.png'),
+            -- misc
+            lg.newImage('res/image/symbol/Book.png'),
+            lg.newImage('res/image/symbol/Candle.png'),
+            lg.newImage('res/image/symbol/Feather.png'),
+            -- wild
+            lg.newImage('res/image/symbol/Wild.png'),
         }
     },
     audio = {
