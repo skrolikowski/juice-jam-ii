@@ -2,12 +2,10 @@
 --
 local M = Container:extend()
 
-function M:new(rules, data)
+function M:new(rules, color)
     self.panel = Panel.super.new(self, rules)
-    self.panel.colour = Config.color.panel
+    self.panel.colour = color or Config.color.panel
     self.panel.r = 10
-    --
-    self.data = data or {}
 
     return self.panel
 end

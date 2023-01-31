@@ -104,21 +104,33 @@ Config = {
         scale = 3
     },
     color = {
-        panel   = ConfigUtil.hex2rgb("3a4a3d", 0.85),
+        panel   = ConfigUtil.hex2rgb("3a4a3d", 0.5),
         tile    = ConfigUtil.hex2rgb("3a4a3d", 0.85),
         white   = { 1, 1, 1, 1 },
         black   = { 0, 0, 0, 1 },
+        header  = ConfigUtil.hex2rgb("899499", 0.85),
         overlay = { 0, 0, 0, 0.75 },
+        hp1     = ConfigUtil.hex2rgb("DC143C"),
+        hp2     = ConfigUtil.hex2rgb("FF0000"),
+        gold    = ConfigUtil.hex2rgb("FFD700"),
     },
     font = {
-        xs = lg.newFont('res/font/monogram.ttf', 16),
-        sm = lg.newFont('res/font/monogram.ttf', 20),
-        md = lg.newFont('res/font/monogram.ttf', 24),
-        lg = lg.newFont('res/font/monogram.ttf', 32),
-        xl = lg.newFont('res/font/monogram.ttf', 48)
+        xs = lg.newFont('res/font/CarterOne-Regular.ttf', 12),
+        sm = lg.newFont('res/font/CarterOne-Regular.ttf', 18),
+        md = lg.newFont('res/font/CarterOne-Regular.ttf', 24),
+        lg = lg.newFont('res/font/CarterOne-Regular.ttf', 32),
+        xl = lg.newFont('res/font/CarterOne-Regular.ttf', 48)
     },
     image = {
         bg = lg.newImage('res/image/bg.png'),
+        icon = {
+            food   = lg.newImage('res/image/icon/Apple.png'),
+            gear   = lg.newImage('res/image/icon/Gear.png'),
+            gold   = lg.newImage('res/image/icon/Coin.png'),
+            heart  = lg.newImage('res/image/icon/Heart.png'),
+            sword  = lg.newImage('res/image/icon/Sword.png'),
+            shield = lg.newImage('res/image/icon/Shield.png')
+        },
         symbolName = {
             "Coin",
             "Diamond",

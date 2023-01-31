@@ -63,9 +63,9 @@ end
 
 function M:keypressed(key)
     if key == "escape" then
-        love.event.quit()
-    elseif key == "p" then
         Gamestate.pop()
+    elseif key == "q" then
+        love.event.quit()
     end
 end
 
@@ -83,20 +83,19 @@ function M:initUI()
     local r1 = Rules.new():addX(x1):addY(y1):addWidth(w1):addHeight(h1)
 
     self.panels = {
-        Center = Panel:new(r1),
+        Center = Panel:new(r1, { 0, 0, 0, 0 }),
     }
 end
 
 function M:drawUI()
     BaseGamestate.drawUI(self)
     --
-    lg.setColor(Config.color.white)
-    lg.setFont(Config.font.lg)
-
     for name, panel in pairs(self.panels) do
         local x, y, w, h = panel:Container()
 
         if name == "Center" then
+            lg.setColor(Config.color.white)
+            lg.setFont(Config.font.xl)
             lg.printf("PAUSED", x, y + h * 0.3, w, "center")
         end
     end
