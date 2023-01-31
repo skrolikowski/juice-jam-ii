@@ -1,35 +1,92 @@
--- Game Data
+-- Game Gamestate
 --
+local M = Class { __includes = BaseGamestate }
 
-local M = Class {}
 
-function M:init()
-    self:reset()
+function M:init(data)
+    self.rig      = Rig()
+    self.isPaused = false
     --
     self:initUI()
-    self:showUI()
 end
 
-function M:reset()
-    self.metadata = {
-        gold   = 100,
-        hp     = 100,
-        sword  = 0,
-        shield = 0,
-    }
+function M:update(dt)
+    if not self.isPaused then
+        self.rig:update(dt)
+    end
 end
 
-function M:updateValue(value, amount)
-    self.metadata[value] = self.metadata[value] + amount
+function M:draw()
     --
-    self:showUI()
+    -- background..
+    lg.setColor(Config.color.white)
+    lg.draw(Config.image.bg)
+
+    self.rig:draw()
+    --
+    if not self.isPaused then
+        self:drawUI()
+    end
 end
 
 --
--- UI
+-- METHODS
 --
+
+function M:enter(from, ...)
+    BaseGamestate.enter(self, from, ...)
+    --
+    -- play intro
+    -- Gamestate.push(Gamestates['intro'])
+
+    self:showUI()
+
+    -- flags
+    self.isPaused = false
+end
+
+function M:resume()
+    self:showUI()
+end
+
+function M:leave()
+    self:hideUI()
+end
+
+---
+-- CONTROLS
+---
+
+function M:keypressed(key)
+    if key == "escape" then
+        love.event.quit()
+    elseif key == "space" then
+        self.rig:trigger()
+    elseif key == "p" then
+        self:onPause()
+    end
+end
+
+---
+-- GO TO
+---
+
+function M:onPause()
+    Gamestate.push(Gamestates['pause'])
+end
+
+function M:onRestart()
+    Gamestate.switch(Gamestates['title'])
+end
+
+---
+-- UI
+---
 
 function M:initUI()
+    BaseGamestate.initUI(self)
+    --
+
     local x1, y1 = Plan.relative(0.01), Plan.relative(0.01)
     local x2, y2 = Plan.relative(0.9 - 0.01), Plan.relative(0.01)
     local x3, y3 = Plan.relative(0.01), Plan.relative(0.80 - 0.01)
@@ -52,26 +109,11 @@ function M:initUI()
         Store  = Panel:new(r3),
         Purse  = Panel:new(r4),
     }
-
 end
 
-function M:UpdateUI()
+function M:drawUI()
+    BaseGamestate.drawUI(self)
     --
-end
-
-function M:showUI()
-    for _, panel in pairs(self.panels) do
-        _UI:addChild(panel)
-    end
-end
-
-function M:hideUI()
-    for _, panel in pairs(self.panels) do
-        _UI:removeChild(panel)
-    end
-end
-
-function M:draw()
     lg.setColor(Config.color.white)
     lg.setFont(Config.font.lg)
 
@@ -80,7 +122,7 @@ function M:draw()
         local ox, oy     = 8, 8
 
         if name == "Player" then
-            lg.printf("HP: " .. self.metadata.hp, x, y + oy, w, "center")
+            lg.printf("HP: " .. _GAME.hp, x, y + oy, w, "center")
             -- elseif name == "Wave" then
             --     lg.printf("Wave: " .. self.wave .. " / " .. #self.waves, x, y + oy, w, "center")
         end

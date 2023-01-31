@@ -15,6 +15,7 @@ Vec2 = require 'src.toolbox.math.Vec2'
 
 --
 Event = require 'src.toolbox.behavior.event'
+Saver = require 'src.toolbox.saver'
 
 --
 Rig  = require 'src.toolbox.rig.rig'

@@ -25,14 +25,14 @@ Config.audio.bgLoop:play()
 Config.audio.bgLoop:setLooping(true)
 
 -- lib packages..
-pprint = require "lib.pprint.pprint"
--- Camera = require "lib.hump.camera"
-Class  = require "lib.hump.class"
-Timer  = require "lib.hump.timer"
--- Gamestate = require "lib.hump.gamestate"
+pprint    = require "lib.pprint.pprint"
+Class     = require "lib.hump.class"
+Timer     = require "lib.hump.timer"
+Gamestate = require "lib.hump.gamestate"
 
 -- local packages..
 require "src.toolbox"
+require "src.gamestate"
 require "src.ui"
 
 local rig
@@ -40,67 +40,68 @@ local rig
 -- Load Game
 --
 function love.load()
-    _Event = Event()
-    _UI    = Plan.new()
-    _Game  = require 'src.Game' ()
+    LoadGame()
     --
-    rig    = Rig()
+    -- _UI = Plan.new()
+    --
+    Gamestate.registerEvents()
+    Gamestate.switch(Gamestates['game'])
 end
 
 -- Update Timer
 --
 function love.update(dt)
     Timer.update(dt)
-    --
-    rig:update(dt)
-end
-
-function love.draw()
-    --
-    -- draw background..
-    lg.setColor(Config.color.white)
-    lg.draw(Config.image.bg)
-
-    -- draw rig..
-    rig:draw()
-
-    -- draw ui..
-    _UI:draw()
-    _Game:draw()
 end
 
 function love.resize()
-    _UI:refresh()
+    Gamestate:current():refresh()
 end
 
----- ---- ---- ----
+---
+-- CONTROLS
+---
+-- function love.keypressed(key)
+--     -- _Event:Dispatch('key_' .. key)
+--     --
 
--- Controls - Key Press
---
-function love.keypressed(key)
-    _Event:Dispatch('key_' .. key)
-    --
-
-    if key == "escape" then
-        love.event.quit()
-    elseif key == "space" then
-        rig:trigger()
-    elseif key == "1" then
-        rig:shake()
-    elseif key == "2" then
-        rig:addJuice()
-    end
-end
-
--- -- Controls - Mouse Move
--- --
--- function love.mousemoved(x, y)
---     -- _World:OnHover(x, y)
+--     if key == "escape" then
+--         love.event.quit()
+--     elseif key == "space" then
+--         rig:trigger()
+--     elseif key == "1" then
+--         rig:shake()
+--     elseif key == "2" then
+--         rig:addJuice()
+--     end
 -- end
 
--- Controls - Mouse Pressed
---
-function love.mousepressed(x, y, button)
-    -- _World:OnClick(x, y, button)
-    _UI:emit("mousepressed", x, y, button)
+-- function love.mousepressed(x, y, button)
+--     -- _UI:emit("mousepressed", x, y, button)
+-- end
+
+---
+-- SAVE/LOAD GAME
+---
+
+function LoadGame()
+    if Saver:exists('juice-jam-ii') then
+        _GAME = Saver:load('juice-jam-ii')
+    end
+    --
+    ResetGame()
+end
+
+function ResetGame()
+    _GAME = Saver:save('juice-jam-ii', {
+        gold   = 100,
+        hp     = 100,
+        sword  = 0,
+        shield = 0,
+        volume = _GAME and _GAME.volume or 1,
+    })
+end
+
+function SaveGame(data)
+    _GAME = Saver:save('juice-jam-ii', Util.Merge(_GAME, data))
 end

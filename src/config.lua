@@ -104,10 +104,11 @@ Config = {
         scale = 3
     },
     color = {
-        panel = ConfigUtil.hex2rgb("3a4a3d", 0.85),
-        tile  = ConfigUtil.hex2rgb("3a4a3d", 0.85),
-        white = { 1, 1, 1, 1 },
-        black = { 0, 0, 0, 1 },
+        panel   = ConfigUtil.hex2rgb("3a4a3d", 0.85),
+        tile    = ConfigUtil.hex2rgb("3a4a3d", 0.85),
+        white   = { 1, 1, 1, 1 },
+        black   = { 0, 0, 0, 1 },
+        overlay = { 0, 0, 0, 0.75 },
     },
     font = {
         xs = lg.newFont('res/font/monogram.ttf', 16),
