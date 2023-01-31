@@ -16,6 +16,12 @@ function M:init(data)
     end
 end
 
+function M:update(dt)
+    for _, tile in pairs(self.tiles) do
+        tile:update(dt)
+    end
+end
+
 function M:draw()
     lg.push()
     lg.translate(self:position())
@@ -122,6 +128,22 @@ function M:spin()
             self:spin()
         end
     end)
+end
+
+--
+-- JUICE
+--
+
+function M:addJuice()
+    for _, tile in pairs(self.tiles) do
+        tile:addJuice()
+    end
+end
+
+function M:removeJuice()
+    for _, tile in pairs(self.tiles) do
+        tile:removeJuice()
+    end
 end
 
 return M

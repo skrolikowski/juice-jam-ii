@@ -51,6 +51,8 @@ end
 --
 function love.update(dt)
     Timer.update(dt)
+    --
+    rig:update(dt)
 end
 
 function love.draw()
@@ -85,6 +87,8 @@ function love.keypressed(key)
         rig:trigger()
     elseif key == "1" then
         rig:shake()
+    elseif key == "2" then
+        rig:addJuice()
     end
 end
 

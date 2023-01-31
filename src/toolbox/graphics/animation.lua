@@ -59,21 +59,26 @@ end
 
 ---- ---- ---- ----
 
-local Animation = Class{}
+local Animation = Class {}
 
 -- New
 --
 function Animation:init(sheet)
 	--
 	-- properties
-	self.sheet  = sheet
-	self.delta  = 1 / 10
-	self.quads  = {}
-	self.index  = 1
+	self.sheet = sheet
+	self.delta = 1 / 10
+	self.index = 1
 
 	-- flags
 	self.isReverse = false
 	self.isPlaying = false
+
+	-- set quads..
+	self.quads = {}
+	for _, quad in pairs(sheet.quads) do
+		table.insert(self.quads, quad)
+	end
 end
 
 -- Container
@@ -149,7 +154,7 @@ end
 -- Add frames
 --
 function Animation:frames(...)
-	for _, name in ipairs({...}) do
+	for _, name in ipairs({ ... }) do
 		table.insert(self.quads, self.sheet:quad(name))
 	end
 

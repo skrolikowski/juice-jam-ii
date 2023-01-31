@@ -118,6 +118,21 @@ Config = {
     },
     image = {
         bg = lg.newImage('res/image/bg.png'),
+        symbolName = {
+            "Coin",
+            "Diamond",
+            "Chest",
+            "Apple",
+            "Potion",
+            "Sword",
+            "Shield",
+            "Slime",
+            "Skull",
+            "Book",
+            "Candle",
+            "Feather",
+            "Wild",
+        },
         symbol = {
             -- money
             lg.newImage('res/image/symbol/Coin.png'),

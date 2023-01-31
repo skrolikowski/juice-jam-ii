@@ -9,6 +9,12 @@ function M:init(data)
     self:setNewSymbol()
 end
 
+function M:update(dt)
+    if self.symbolAnim and self.symbolAnim.isPlaying then
+        self.symbolAnim:update(dt)
+    end
+end
+
 function M:draw()
     -- draw background
     lg.setColor(Config.color.tile)
@@ -20,14 +26,16 @@ function M:draw()
     -- draw symbol
     lg.push()
     lg.translate(self:center())
-    --
+    lg.scale(self.symbolScale.x, self.symbolScale.y)
     lg.setColor(Config.color.white)
-    lg.draw(self.symbol,
-        -self.symbolWidth * self.symbolScale.x * 0.5,
-        -self.symbolHeight * self.symbolScale.y * 0.5,
-        0,
-        self.symbolScale.x,
-        self.symbolScale.y)
+    --
+    if self.symbolAnim and self.symbolAnim.isPlaying then
+        self.symbolAnim:draw(0, 0, 0, 2, 2)
+    else
+        lg.draw(self.symbolImage,
+            -self.symbolWidth * 0.5,
+            -self.symbolHeight * 0.5)
+    end
     --
     lg.pop()
 end
@@ -97,10 +105,33 @@ function M:setNewSymbol()
 
     --
     self.symbolIndex  = randIndex
-    self.symbol       = Config.image.symbol[self.symbolIndex]
-    self.symbolWidth  = self.symbol:getWidth()
-    self.symbolHeight = self.symbol:getHeight()
+    self.symbolName   = Config.image.symbolName[self.symbolIndex]
+    self.symbolImage  = Config.image.symbol[self.symbolIndex]
+    self.symbolAnim   = nil
+    self.symbolWidth  = self.symbolImage:getWidth()
+    self.symbolHeight = self.symbolImage:getHeight()
     self.symbolScale  = Vec2(Config.tile.scale, Config.tile.scale)
+
+    -- set juice animation.. (if applicable)
+    if Sheet[self.symbolName] then
+        self.symbolAnim = Animation(Sheet[self.symbolName]):at(60)
+    end
+end
+
+--
+-- JUICE
+--
+
+function M:addJuice()
+    if self.symbolAnim then
+        self.symbolAnim:play()
+    end
+end
+
+function M:removeJuice()
+    if self.symbolAnim then
+        self.symbolAnim:stop()
+    end
 end
 
 return M

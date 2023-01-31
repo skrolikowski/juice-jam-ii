@@ -27,6 +27,12 @@ function M:init(data)
     end
 end
 
+function M:update(dt)
+    for _, reel in pairs(self.reels) do
+        reel:update(dt)
+    end
+end
+
 function M:draw()
     lg.push()
     lg.translate(self:center())
@@ -105,21 +111,6 @@ function M:trigger()
             __startSpin()
         end
     end
-end
-
-function M:shake(duration, _fx, _fy)
-    local ox, oy = self.pos:unpack()
-    local fx, fy = _fx or 3, _fy or 3
-
-    Timer.during(duration or 0.5,
-        function()
-            self.pos.x = ox + math.random(-fx, fy)
-            self.pos.y = oy + math.random(-fx, fy)
-        end,
-        function()
-            self.pos.x = ox
-            self.pos.y = oy
-        end)
 end
 
 function M:handlePostSpin()
@@ -297,5 +288,36 @@ end
 --     end
 --     print(table.concat(results, "\n"))
 -- end
+
+--
+-- JUICE
+--
+
+function M:shake(duration, _fx, _fy)
+    local ox, oy = self.pos:unpack()
+    local fx, fy = _fx or 3, _fy or 3
+
+    Timer.during(duration or 0.5,
+        function()
+            self.pos.x = ox + math.random(-fx, fy)
+            self.pos.y = oy + math.random(-fx, fy)
+        end,
+        function()
+            self.pos.x = ox
+            self.pos.y = oy
+        end)
+end
+
+function M:addJuice()
+    for _, reel in pairs(self.reels) do
+        reel:addJuice()
+    end
+end
+
+function M:removeJuice()
+    for _, reel in pairs(self.reels) do
+        reel:removeJuice()
+    end
+end
 
 return M
