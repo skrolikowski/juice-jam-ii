@@ -38,12 +38,10 @@ require "src.ui"
 -- Load Game
 --
 function love.load()
-    LoadGame()
-    --
-    -- _UI = Plan.new()
+    -- LoadGame()
     --
     Gamestate.registerEvents()
-    Gamestate.switch(Gamestates['game'])
+    Gamestate.switch(Gamestates['title'])
 end
 
 -- Update Timer
@@ -82,6 +80,15 @@ end
 -- SAVE/LOAD GAME
 ---
 
+function CanContinueGame()
+    if Saver:exists('juice-jam-ii') then
+        local data = Saver:load('juice-jam-ii')
+        return data.hp > 0 and data.gold > 0
+    end
+
+    return false
+end
+
 function LoadGame()
     if Saver:exists('juice-jam-ii') then
         _GAME = Saver:load('juice-jam-ii')
@@ -89,12 +96,12 @@ function LoadGame()
         ResetGame()
     end
     --
-    ResetGame()
+    -- ResetGame()
 end
 
 function ResetGame()
     _GAME = Saver:save('juice-jam-ii', {
-        gold   = 250,
+        gold   = 500,
         hp     = 100,
         shield = 1,
         volume = _GAME and _GAME.volume or 1,

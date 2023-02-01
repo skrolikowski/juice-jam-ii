@@ -3,14 +3,10 @@
 
 local M = Class { __includes = BaseGamestate }
 
--- Init
---
 function M:init()
     self:initUI()
 end
 
--- Enter
---
 function M:enter(from, ...)
     BaseGamestate.enter(self, from, ...)
     --

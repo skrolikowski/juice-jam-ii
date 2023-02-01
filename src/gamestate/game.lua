@@ -24,7 +24,7 @@ function M:draw()
     --
     -- background..
     lg.setColor(Config.color.white)
-    lg.draw(Config.image.bg)
+    lg.draw(Config.image.bg[3])
 
     self.rig:draw()
     --

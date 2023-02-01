@@ -25,7 +25,7 @@ Config = {
         ["2"] = { gold = 500, payout = 001, value = "shield" },
     },
     rig = {
-        cost          = 5,
+        cost          = 50,
         spinLength    = 1.5,
         numReels      = 5,
         numRows       = 5,
@@ -39,51 +39,51 @@ Config = {
             { 4, 4, 3, 2, 2 },
         },
         sequences     = {
-            [1] = { min = 3, payout = 10, value = "gold" },
-            [2] = { min = 3, payout = 25, value = "gold" },
+            [1] = { min = 3, payout = 050, value = "gold" },
+            [2] = { min = 3, payout = 100, value = "gold" },
         },
         scatters      = {
-            [3] = { min = 3, payout = 50, value = "gold" },
-            [4] = { min = 3, payout = 20, value = "hp" },
-            [5] = { min = 5, payout = 01, value = "shield" },
-            [6] = { min = 3, payout = 10, value = "hit" },
+            [3] = { min = 3, payout = 250, value = "gold" },
+            [4] = { min = 3, payout = 025, value = "hp" },
+            [5] = { min = 3, payout = 001, value = "shield" },
+            [6] = { min = 3, payout = 010, value = "hit" },
         },
         symbolWeights = {
             {
                 030, -- Coin
                 010, -- Diamond
                 003, -- Chest
-                003, -- Apple
+                005, -- Apple
                 003, -- Shield
-                010, -- Skull
-                003, -- Book
-                003, -- Candle
-                003, -- Feather
+                008, -- Skull
+                002, -- Book
+                002, -- Candle
+                002, -- Feather
             },
             {
                 030, -- Coin
                 010, -- Diamond
                 003, -- Chest
-                003, -- Apple
+                005, -- Apple
                 003, -- Shield
-                010, -- Skull
-                003, -- Book
-                003, -- Candle
-                003, -- Feather
+                008, -- Skull
+                002, -- Book
+                002, -- Candle
+                002, -- Feather
             },
             {
-                020, -- Coin
+                025, -- Coin
                 010, -- Diamond
                 005, -- Chest
-                003, -- Apple
+                005, -- Apple
                 003, -- Shield
                 015, -- Skull
-                003, -- Book
-                003, -- Candle
-                003, -- Feather
+                002, -- Book
+                002, -- Candle
+                002, -- Feather
             },
             {
-                010, -- Coin
+                015, -- Coin
                 005, -- Diamond
                 005, -- Chest
                 005, -- Apple
@@ -124,6 +124,7 @@ Config = {
         black     = { 0, 0, 0, 1 },
         header    = ConfigUtil.hex2rgb("7393B3", 0.85),
         overlay   = { 0, 0, 0, 0.75 },
+        clear     = { 0, 0, 0, 0 },
         hp        = ConfigUtil.hex2rgb("DC143C", 0.5),
         hp_bg     = ConfigUtil.hex2rgb("000000", 0.25),
         hp_border = ConfigUtil.hex2rgb("FF0000"),
@@ -137,7 +138,13 @@ Config = {
         xl = lg.newFont('res/font/CarterOne-Regular.ttf', 48)
     },
     image = {
-        bg     = lg.newImage('res/image/bg.png'),
+        bg     = {
+            lg.newImage('res/image/Bridge 1.png'),
+            lg.newImage('res/image/Bridge 3.png'),
+            lg.newImage('res/image/Cavern 3.png'),
+            lg.newImage('res/image/Crystals 1.png'),
+            lg.newImage('res/image/Interior 2.png'),
+        },
         rules  = lg.newImage('res/image/rules.png'),
         symbol = {
             "Coin",
