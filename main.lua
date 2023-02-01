@@ -35,8 +35,6 @@ require "src.toolbox"
 require "src.gamestate"
 require "src.ui"
 
-local rig
-
 -- Load Game
 --
 function love.load()

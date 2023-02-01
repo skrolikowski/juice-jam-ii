@@ -24,16 +24,25 @@ function Spritesheet:init(filePath)
 
         self.image = lg.newImage(path .. name .. '.png')
         self.quads = {}
+        self.dict = {}
 
         for _, frame in ipairs(json.frames) do
             local name = __basename(frame.filename)
-            local x = frame.frame.x
-            local y = frame.frame.y
-            local w = frame.frame.w
-            local h = frame.frame.h
+            local x    = frame.frame.x
+            local y    = frame.frame.y
+            local w    = frame.frame.w
+            local h    = frame.frame.h
+            local quad = lg.newQuad(x, y, w, h, self.image:getDimensions())
 
-            table.insert(self.quads, lg.newQuad(x, y, w, h, self.image:getDimensions()))
+            self.dict[name] = quad
+            table.insert(self.quads, quad)
         end
+    end
+end
+
+function Spritesheet:draw(name, ...)
+    if self.dict[name] then
+        lg.draw(self.image, self.dict[name], ...)
     end
 end
 
