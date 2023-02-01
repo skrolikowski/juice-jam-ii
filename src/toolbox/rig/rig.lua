@@ -215,10 +215,6 @@ function M:checkPayline(payline)
             -- combo tally..
             symbolIndex = tile.symbolIndex
             symbolCount = symbolCount + 1
-        elseif tile.symbolIndex == Config.rig.wildSymbolIndex then
-            --
-            -- wild!!
-            symbolCount = symbolCount + 1
         else
             --
             -- combo broken.. exit early
@@ -272,7 +268,7 @@ function M:handlePayout(metadata, symbolCount)
     end
 
     print("Payout", payoutValue, payoutAmount)
-    _Game:updateValue(payoutValue, payoutAmount)
+    -- _Game:updateValue(payoutValue, payoutAmount)
 end
 
 -- function M:debugResults()

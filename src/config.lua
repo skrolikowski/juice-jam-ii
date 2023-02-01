@@ -49,7 +49,6 @@ Config = {
             [7] = { min = 3, payout = 01, value = "shield" }, -- Shield (payout = + shield)
             [9] = { min = 3, payout = -10, value = "hp" }, -- Skull  (payout = - hp)
         },
-        wildSymbolIndex      = 14,
         symbolWeights        = {
             -- money
             050, -- Coin    (sequence)
@@ -68,8 +67,6 @@ Config = {
             005, -- Book
             005, -- Candle
             005, -- Feather
-            -- wild
-            010, -- Wild
         },
         symbolWeightsReelOne = {
             -- money
@@ -100,8 +97,8 @@ Config = {
         spinDurationOut = { 0.5, 0.3, 0.2, 0.1, 0.08, 0.05, 0.03, 0.02 }
     },
     tile = {
-        size  = lg.getWidth() * 0.1,
-        scale = 3
+        size  = lg.getWidth() * 0.125,
+        scale = 4
     },
     color = {
         panel   = ConfigUtil.hex2rgb("3a4a3d", 0.5),
@@ -122,50 +119,26 @@ Config = {
         xl = lg.newFont('res/font/CarterOne-Regular.ttf', 48)
     },
     image = {
-        bg = lg.newImage('res/image/bg.png'),
-        icon = {
-            food   = lg.newImage('res/image/icon/Apple.png'),
-            gear   = lg.newImage('res/image/icon/Gear.png'),
-            gold   = lg.newImage('res/image/icon/Coin.png'),
-            heart  = lg.newImage('res/image/icon/Heart.png'),
-            sword  = lg.newImage('res/image/icon/Sword.png'),
-            shield = lg.newImage('res/image/icon/Shield.png')
-        },
-        symbolName = {
+        bg     = lg.newImage('res/image/bg.png'),
+        rules  = lg.newImage('res/image/rules.png'),
+        symbol = {
+            -- money
             "Coin",
             "Diamond",
             "Chest",
+            -- health
             "Apple",
             "Potion",
+            -- tools
             "Sword",
             "Shield",
+            -- enemy
             "Slime",
             "Skull",
+            -- misc
             "Book",
             "Candle",
             "Feather",
-            "Wild",
-        },
-        symbol = {
-            -- money
-            lg.newImage('res/image/symbol/Coin.png'),
-            lg.newImage('res/image/symbol/Diamond.png'),
-            lg.newImage('res/image/symbol/Chest.png'),
-            -- health
-            lg.newImage('res/image/symbol/Apple.png'),
-            lg.newImage('res/image/symbol/Potion.png'),
-            -- tools
-            lg.newImage('res/image/symbol/Sword.png'),
-            lg.newImage('res/image/symbol/Shield.png'),
-            -- enemy
-            lg.newImage('res/image/symbol/Slime.png'),
-            lg.newImage('res/image/symbol/Skull.png'),
-            -- misc
-            lg.newImage('res/image/symbol/Book.png'),
-            lg.newImage('res/image/symbol/Candle.png'),
-            lg.newImage('res/image/symbol/Feather.png'),
-            -- wild
-            lg.newImage('res/image/symbol/Wild.png'),
         }
     },
     audio = {

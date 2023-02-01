@@ -8,12 +8,16 @@ function M:init(data)
     self.isPaused = false
     --
     self:initUI()
+
+    -- Particles = require "res.particles.RainingCoins"
 end
 
 function M:update(dt)
     if not self.isPaused then
         self.rig:update(dt)
     end
+
+    -- Particles[1].system:update(dt)
 end
 
 function M:draw()
@@ -27,6 +31,10 @@ function M:draw()
     if not self.isPaused then
         self:drawUI()
     end
+
+    -- lg.setBlendMode(Particles[1].blendMode)
+    -- lg.draw(Particles[1].system, Config.width * 0.5, Config.height * 0.5)
+    -- lg.setBlendMode("alpha")
 end
 
 --
@@ -126,14 +134,14 @@ function M:drawUI()
             lg.setColor(Config.color.hp2)
             lg.rectangle('line', x + ox * 2, y + oy * 5, w * 0.8, oy * 2, 5, 5)
             lg.setColor(Config.color.white)
-            lg.draw(Config.image.icon.heart, x + ox, y + oy * 3, 0, 1.5, 1.5)
+            Sheet.Symbol:draw("Heart", x + ox, y + oy * 3, 0, 1.5, 1.5)
 
             -- shield power-up..
             lg.setColor(Config.color.header)
             lg.rectangle('line', w * 0.6, y + h * 0.55, ox * 5, oy * 6, 5, 5)
             if _GAME.shield > 0 then
                 lg.setColor(Config.color.white)
-                lg.draw(Config.image.icon.shield, w * 0.625, y + h * 0.575, 0, 1.25, 1.25)
+                Sheet.Symbol:draw("Shield", w * 0.625, y + h * 0.575, 0, 1.25, 1.25)
             end
 
             -- sword power-up..
@@ -141,7 +149,7 @@ function M:drawUI()
             lg.rectangle('line', w * 0.8, y + h * 0.55, ox * 5, oy * 6, 5, 5)
             if _GAME.sword > 0 then
                 lg.setColor(Config.color.white)
-                lg.draw(Config.image.icon.sword, w * 0.825, y + h * 0.575, 0, 1.25, 1.25)
+                Sheet.Symbol:draw("Sword", w * 0.825, y + h * 0.575, 0, 1.25, 1.25)
             end
             -- elseif name == "Menu" then
             --     --
@@ -171,11 +179,11 @@ function M:drawUI()
             lg.print("[3] - 1000", x + w * 0.775, y + h * 0.775)
 
             lg.setColor(Config.color.white)
-            lg.draw(Config.image.icon.food, x + w * 0.35, y + h * 0.15, 0, 2, 2)
-            lg.draw(Config.image.icon.shield, x + w * 0.58, y + h * 0.15, 0, 2, 2)
-            lg.draw(Config.image.icon.sword, x + w * 0.80, y + h * 0.15, 0, 2, 2)
+            Sheet.Symbol:draw("Apple", x + w * 0.35, y + h * 0.15, 0, 2, 2)
+            Sheet.Symbol:draw("Shield", x + w * 0.58, y + h * 0.15, 0, 2, 2)
+            Sheet.Symbol:draw("Sword", x + w * 0.80, y + h * 0.15, 0, 2, 2)
         elseif name == "Bank" then
-            -- --
+            --
             -- title
             lg.setColor(Config.color.header)
             lg.setFont(Config.font.md)
@@ -184,7 +192,7 @@ function M:drawUI()
             -- gold
             lg.setColor(Config.color.gold)
             lg.setFont(Config.font.lg)
-            lg.draw(Config.image.icon.gold, x + ox, y + oy, 0, 1.5, 1.5)
+            Sheet.Symbol:draw("Coin", x + ox, y + oy, 0, 1.5, 1.5)
             lg.printf(_GAME.gold, x, y + h * 0.4, w * 0.9, "right")
         end
     end
