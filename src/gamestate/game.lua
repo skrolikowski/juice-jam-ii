@@ -54,6 +54,8 @@ function M:enter(from, ...)
 end
 
 function M:resume()
+    self.isPaused = false
+    --
     self:showUI()
 end
 
@@ -78,6 +80,8 @@ end
 ---
 
 function M:onPause()
+    self.isPaused = true
+    --
     Gamestate.push(Gamestates['pause'])
 end
 

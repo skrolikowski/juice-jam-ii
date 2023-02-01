@@ -8,6 +8,7 @@ function M:init(data)
     --
     self.pos            = Vec2(cx, cy)
     self.reels          = {}
+    self.timer          = Timer.new()
     self.isBusy         = false
     self.isSpinning     = false
     self.autoStopHandle = nil
@@ -28,6 +29,8 @@ function M:init(data)
 end
 
 function M:update(dt)
+    self.timer:update(dt)
+    --
     for _, reel in pairs(self.reels) do
         reel:update(dt)
     end
@@ -63,13 +66,13 @@ end
 
 function M:trigger()
     local __stopSpin = function()
-        Timer.cancel(self.autoStopHandle)
+        self.timer:cancel(self.autoStopHandle)
         --
         Config.audio.spinLoop:stop()
         Config.audio.spinStop:play()
         --
         for i, reel in pairs(self.reels) do
-            Timer.after(0.05 * (i - 1),
+            self.timer:after(0.05 * (i - 1),
                 function()
                     reel:stopSpin()
                     Config.audio.spinReveal[i]:play()
@@ -88,7 +91,7 @@ function M:trigger()
         Config.audio.spinStart:play()
         --
         for i, reel in pairs(self.reels) do
-            Timer.after(0.05 * (i - 1),
+            self.timer:after(0.05 * (i - 1),
                 function() reel:startSpin() end)
             --
             -- auto-stop spin after delay..
@@ -96,7 +99,7 @@ function M:trigger()
                 Config.audio.spinLoop:play()
                 Config.audio.spinLoop:setLooping(true)
                 --
-                self.autoStopHandle = Timer.after(3, function()
+                self.autoStopHandle = self.timer:after(Config.rig.spinLength, function()
                     __stopSpin()
                 end)
             end
@@ -116,7 +119,7 @@ end
 function M:handlePostSpin()
     --
     -- Delay for tiles to lock in place..
-    Timer.after(0.5 * Config.rig.numReels, function()
+    self.timer:after(0.5 * Config.rig.numReels, function()
         self.isSpinning = false
         -- self.isBusy     = true
         self.results    = {} -- reset
@@ -293,7 +296,7 @@ function M:shake(duration, _fx, _fy)
     local ox, oy = self.pos:unpack()
     local fx, fy = _fx or 3, _fy or 3
 
-    Timer.during(duration or 0.5,
+    self.timer:during(duration or 0.5,
         function()
             self.pos.x = ox + math.random(-fx, fy)
             self.pos.y = oy + math.random(-fx, fy)

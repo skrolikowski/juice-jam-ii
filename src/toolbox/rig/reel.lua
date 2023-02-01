@@ -9,6 +9,7 @@ function M:init(data)
     self.index = data.index
     self.pos   = Vec2(cx, cy)
     self.tiles = {}
+    self.timer = Timer.new()
 
     -- create tiles
     for i = 1, Config.rig.numRows do
@@ -17,6 +18,8 @@ function M:init(data)
 end
 
 function M:update(dt)
+    self.timer:update(dt)
+    --
     for _, tile in pairs(self.tiles) do
         tile:update(dt)
     end
@@ -106,7 +109,7 @@ function M:spin()
     end
 
     -- tween
-    self.tween = Timer.tween(duration, subject, target, ease, function()
+    self.tween = self.timer:tween(duration, subject, target, ease, function()
         --
         -- update spin counters..
         self.numSpins = self.numSpins + 1
