@@ -11,7 +11,7 @@
     "code-runner.saveAllFilesBeforeRun": true,
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
-    "Lua.runtime.version": "LuaJIT",
+    "Lua.runtime.version": "Lua 5.4",
     "Lua.workspace.library": [
         "${3rd}/love2d/library"
     ]

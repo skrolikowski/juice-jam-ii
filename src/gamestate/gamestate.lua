@@ -48,6 +48,18 @@ function M:leave()
 
 end
 
+---
+-- GO TO
+---
+
+function M:onGameOver()
+    Gamestate.switch(Gamestates['gameover'])
+end
+
+function M:onRestart()
+    Gamestate.switch(Gamestates['title'])
+end
+
 ---- ---- ---- ----
 
 -- Event: on request

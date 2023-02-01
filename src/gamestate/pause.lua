@@ -77,13 +77,21 @@ function M:initUI()
     BaseGamestate.initUI(self)
     --
 
-    local x1, y1 = Plan.center(), Plan.center()
-    local w1, h1 = Plan.relative(0.20), Plan.relative(0.10)
+    local x1, y1 = Plan.relative(0.05), Plan.relative(0.05)
+    local x2, y2 = Plan.relative(0.30), Plan.relative(0.05)
+    -- local x3, y3 = Plan.relative(0.65), Plan.relative(0.05)
+    local w1, h1 = Plan.relative(0.40), Plan.relative(0.40)
+    local w2, h2 = Plan.relative(0.25), Plan.relative(0.50)
 
     local r1 = Rules.new():addX(x1):addY(y1):addWidth(w1):addHeight(h1)
+    local r2 = Rules.new():addX(x2):addY(y2):addWidth(w2):addHeight(h2)
+    -- local r3 = Rules.new():addX(x3):addY(y3):addWidth(w1):addHeight(h1)
 
     self.panels = {
-        Center = Panel:new(r1, { 0, 0, 0, 0 }),
+        Rules = Panel:new(r1, Config.color.panel2),
+        Center = Panel:new(r2, Config.color.panel2),
+        -- Scatter = Panel:new(r3, Config.color.panel2),
+        -- Info = Panel:new(r4, Config.color.panel2),
     }
 end
 
@@ -97,6 +105,7 @@ function M:drawUI()
             lg.setColor(Config.color.white)
             lg.setFont(Config.font.xl)
             lg.printf("PAUSED", x, y + h * 0.3, w, "center")
+            -- lg.draw(Config.image.rules, x, y * 0.25, 0, 1.5)
         end
     end
 end

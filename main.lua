@@ -85,6 +85,8 @@ end
 function LoadGame()
     if Saver:exists('juice-jam-ii') then
         _GAME = Saver:load('juice-jam-ii')
+    else
+        ResetGame()
     end
     --
     ResetGame()
@@ -92,14 +94,13 @@ end
 
 function ResetGame()
     _GAME = Saver:save('juice-jam-ii', {
-        gold   = 100,
+        gold   = 250,
         hp     = 100,
-        sword  = 0,
-        shield = 0,
+        shield = 1,
         volume = _GAME and _GAME.volume or 1,
     })
 end
 
 function SaveGame(data)
-    _GAME = Saver:save('juice-jam-ii', Util.Merge(_GAME, data))
+    _GAME = Saver:save('juice-jam-ii', Util.Merge(_GAME, data or {}))
 end

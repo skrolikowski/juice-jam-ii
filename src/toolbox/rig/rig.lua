@@ -9,7 +9,6 @@ function M:init(data)
     self.pos            = Vec2(cx, cy)
     self.reels          = {}
     self.timer          = Timer.new()
-    self.isBusy         = false
     self.isSpinning     = false
     self.autoStopHandle = nil
 
@@ -107,12 +106,13 @@ function M:trigger()
     end
 
     --
-    if not self.isBusy then
-        if self.isSpinning then
-            __stopSpin()
-        else
-            __startSpin()
-        end
+    if not self.isSpinning then
+        --
+        -- Pay for spin..
+        _GAME.gold = _GAME.gold - math.min(Config.rig.cost, _GAME.gold)
+
+        -- Spin!
+        __startSpin()
     end
 end
 
@@ -120,15 +120,16 @@ function M:handlePostSpin()
     --
     -- Delay for tiles to lock in place..
     self.timer:after(0.5 * Config.rig.numReels, function()
+        self.results = {} -- reset
         self.isSpinning = false
-        -- self.isBusy     = true
-        self.results    = {} -- reset
         --
         self:checkForScatters()
-        self:handleScatterPayouts()
-        --
         self:checkForSequences()
-        self:handleSequencePayouts()
+        self:handlePayouts()
+        --
+        SaveGame()
+        --
+        self:checkForGameOver()
     end)
 end
 
@@ -136,7 +137,6 @@ end
 -- --
 -- {
 --    {
---      symbolIndex = symbolIndex,
 --      metadata    = { min = Number, payout = Number, value = String },
 --      tiles       = { Tile, Tile, ... }
 --    },
@@ -156,9 +156,8 @@ function M:checkForScatters()
                     table.insert(scatters[tile.symbolIndex].tiles, tile)
                 else
                     scatters[tile.symbolIndex] = {
-                        symbolIndex = tile.symbolIndex,
-                        metadata    = metadata,
-                        tiles       = { tile }
+                        metadata = metadata,
+                        tiles    = { tile }
                     }
                 end
             end
@@ -166,10 +165,9 @@ function M:checkForScatters()
     end
 
     --
-    self.results['scatters'] = {}
     for _, data in pairs(scatters) do
         if #data.tiles >= data.metadata.min then
-            table.insert(self.results['scatters'], data)
+            table.insert(self.results, data)
         end
     end
 end
@@ -178,26 +176,22 @@ end
 -- --
 -- {
 --    {
---      payline     = { 3, 3, 3, 3, 3 },
 --      metadata    = { min = Number, payout = Number, value = String },
---      symbolCount = Number,
+--      tiles       = { Tile, Tile, ... }
 --    },
 --    ...
 -- }
 --
 --
 function M:checkForSequences()
-    self.results['sequences'] = {}
-    --
     for _, payline in pairs(Config.rig.paylines) do
-        local symbolIndex, symbolCount = self:checkPayline(payline)
-        local metadata                 = Config.rig.sequences[symbolIndex]
+        local symbolIndex, tiles = self:checkPayline(payline)
+        local metadata           = Config.rig.sequences[symbolIndex]
 
-        if metadata and symbolCount >= metadata.min then
-            table.insert(self.results['sequences'], {
-                payline     = payline,
-                metadata    = metadata,
-                symbolCount = symbolCount,
+        if metadata and #tiles >= metadata.min then
+            table.insert(self.results, {
+                metadata = metadata,
+                tiles    = tiles,
             })
         end
     end
@@ -206,8 +200,8 @@ end
 -- Check individual payline for winner..
 --
 function M:checkPayline(payline)
-    local symbolCount = 0
     local symbolIndex
+    local tiles = {}
 
     for reelIndex, tileIndex in pairs(payline) do
         local reel = self.reels[reelIndex]
@@ -217,43 +211,27 @@ function M:checkPayline(payline)
             --
             -- combo tally..
             symbolIndex = tile.symbolIndex
-            symbolCount = symbolCount + 1
+            table.insert(tiles, tile)
         else
             --
             -- combo broken.. exit early
-            return symbolIndex, symbolCount
+            return symbolIndex, tiles
         end
     end
 
-    return symbolIndex, symbolCount
+    return symbolIndex, tiles
 end
 
-function M:handleScatterPayouts()
-    for _, data in pairs(self.results['scatters']) do
+function M:handlePayouts()
+    for _, data in pairs(self.results) do
         --
-        -- highlight symbols..
+        -- highlight payline..
         for _, tile in pairs(data.tiles) do
             -- tile:highlight()
         end
 
         -- deal payout..
         self:handlePayout(data.metadata, #data.tiles)
-    end
-
-end
-
-function M:handleSequencePayouts()
-    for _, data in pairs(self.results['sequences']) do
-        --
-        -- highlight payline..
-        for reelIndex, rowIndex in pairs(data.payline) do
-            local reel = self.reels[reelIndex]
-            local tile = reel.tiles[rowIndex]
-            -- tile:highlight()
-        end
-
-        -- deal payout..
-        self:handlePayout(data.metadata, data.symbolCount)
     end
 end
 
@@ -271,7 +249,37 @@ function M:handlePayout(metadata, symbolCount)
     end
 
     print("Payout", payoutValue, payoutAmount)
-    -- _Game:updateValue(payoutValue, payoutAmount)
+    if payoutValue == "gold" then
+        --
+        --TODO: add gold juice
+        _GAME[payoutValue] = _GAME[payoutValue] + payoutAmount
+    elseif payoutValue == "hp" then
+        --
+        --TODO: add hp juice
+        _GAME["hp"] = math.min(100, _GAME["hp"] + payoutAmount)
+    elseif payoutValue == "hit" then
+        if _GAME["shield"] > 0 then
+            --
+            --TODO: remove shield juice
+            _GAME["shield"] = _GAME["shield"] - 1
+        else
+            --
+            --TODO: remove hp juice
+            _GAME["hp"] = math.max(0, _GAME["hp"] - payoutAmount)
+        end
+    elseif payoutValue == "shield" then
+        --
+        --TODO: add shield juice
+        _GAME[payoutValue] = math.max(3, _GAME[payoutValue] + 1)
+    end
+end
+
+function M:checkForGameOver()
+    if _GAME.hp == 0 then
+        Gamestate:current():onGameOver()
+    elseif _GAME.gold < Config.rig.cost then
+        Gamestate:current():onGameOver()
+    end
 end
 
 -- function M:debugResults()
