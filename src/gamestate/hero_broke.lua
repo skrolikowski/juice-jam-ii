@@ -7,6 +7,10 @@ local M = Class { __includes = BaseGamestate }
 --
 function M:init()
     self:initUI()
+    --
+    self.offset   = Vec2(self.panels.Center.x, self.panels.Center.y)
+    self.juice_01 = Animation(Sheet["Coin_End"]):at(64):scale(3, 3)
+    self.juice_02 = Animation(Sheet["Coin_End"]):at(64):scale(3, 3)
 end
 
 -- Enter
@@ -14,17 +18,40 @@ end
 function M:enter(from, ...)
     BaseGamestate.enter(self, from, ...)
     --
+    self.juice_01:play()
+    self.juice_02:play()
+
+    local ox, oy = self.offset:unpack()
+    local fx, fy = 1, 1
+
+    self.shake = Timer.every(0.005,
+        function()
+            self.offset.x = ox + math.random(-fx, fy)
+            self.offset.y = oy + math.random(-fx, fy)
+        end)
+    --
     self:showUI()
 end
 
 function M:leave()
     BaseGamestate.leave(self)
     --
+    self.juice_01:stop()
+    self.juice_02:stop()
+    --
+    Timer.cancel(self.shake)
+    --
     self:hideUI()
+end
+
+function M:update(dt)
+    self.juice_01:update(dt)
+    self.juice_02:update(dt)
 end
 
 function M:draw()
     -- self.from:draw()
+
     --
     -- bg (dark overlay)
     lg.setColor(Config.color.overlay)
@@ -55,13 +82,12 @@ end
 function M:initUI()
     BaseGamestate.initUI(self)
     --
-
     local x1, y1 = Plan.center(), Plan.center()
-    local w1, h1 = Plan.relative(0.40), Plan.relative(0.20)
+    local w1, h1 = Plan.relative(0.50), Plan.relative(0.20)
     local r1     = Rules.new():addX(x1):addY(y1):addWidth(w1):addHeight(h1)
 
     self.panels = {
-        Center = Panel:new(r1, Config.color.panel),
+        Center = Panel:new(r1, Config.color.clear),
     }
 end
 
@@ -70,17 +96,18 @@ function M:drawUI()
     --
     for name, panel in pairs(self.panels) do
         local x, y, w, h = panel:Container()
+        local ox, oy     = self.offset:unpack()
 
         if name == "Center" then
             lg.setColor(Config.color.white)
             lg.setFont(Config.font.xl)
-            lg.printf("YOU'RE BROKE!", x, y + h * 0.15, w, "center")
+            lg.printf("YOU'RE BROKE!", x + ox, y + h * 0.15 + oy, w, "center")
             lg.setFont(Config.font.sm)
             lg.printf("Press SPACE to Continue", x, y + h * 0.7, w, "center")
 
             lg.setColor(Config.color.white)
-            Sheet.Symbol:draw("Coin", x + w * 0.025, y + h * 0.3, 0, 3, 3)
-            Sheet.Symbol:draw("Coin", x + w * 0.825, y + h * 0.3, 0, 3, 3)
+            self.juice_01:draw(x + w * 0.05, y + h * 0.5)
+            self.juice_02:draw(x + w * 0.95, y + h * 0.5)
         end
     end
 end
