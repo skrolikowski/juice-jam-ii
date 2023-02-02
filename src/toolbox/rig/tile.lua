@@ -98,7 +98,7 @@ function M:setNewSymbol()
 
     -- set juice animation.. (if applicable)
     if Sheet[self.symbol] then
-        self.symbolAnim = Animation(Sheet[self.symbol]):at(60)
+        self.symbolAnim = Animation(Sheet[self.symbol]):at(32):once()
     end
 end
 
@@ -106,13 +106,13 @@ end
 -- JUICE
 --
 
-function M:addJuice()
+function M:highlight()
     if self.symbolAnim then
         self.symbolAnim:play()
     end
 end
 
-function M:removeJuice()
+function M:unhighlight()
     if self.symbolAnim then
         self.symbolAnim:stop()
     end

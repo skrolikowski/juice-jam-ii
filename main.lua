@@ -40,6 +40,10 @@ require "src.ui"
 function love.load()
     -- LoadGame()
     --
+    Config.particles.AwardingShield:stop()
+    Config.particles.MouseCoins:stop()
+    Config.particles.RainingCoins:stop()
+    --
     Gamestate.registerEvents()
     Gamestate.switch(Gamestates['title'])
 end
@@ -53,28 +57,6 @@ end
 function love.resize()
     Gamestate:current():refresh()
 end
-
----
--- CONTROLS
----
--- function love.keypressed(key)
---     -- _Event:Dispatch('key_' .. key)
---     --
-
---     if key == "escape" then
---         love.event.quit()
---     elseif key == "space" then
---         rig:trigger()
---     elseif key == "1" then
---         rig:shake()
---     elseif key == "2" then
---         rig:addJuice()
---     end
--- end
-
--- function love.mousepressed(x, y, button)
---     -- _UI:emit("mousepressed", x, y, button)
--- end
 
 ---
 -- SAVE/LOAD GAME
@@ -96,7 +78,7 @@ function LoadGame()
         ResetGame()
     end
     --
-    -- ResetGame()
+    ResetGame()
 end
 
 function ResetGame()

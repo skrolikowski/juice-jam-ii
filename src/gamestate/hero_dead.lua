@@ -41,6 +41,8 @@ function M:leave()
     --
     Timer.cancel(self.shake)
     --
+    ResetGame()
+    --
     self:hideUI()
 end
 
@@ -50,7 +52,7 @@ function M:update(dt)
 end
 
 function M:draw()
-    -- self.from:draw()
+    self.from:draw()
 
     --
     -- bg (dark overlay)
@@ -66,10 +68,7 @@ end
 ---
 
 function M:keypressed(key)
-    if key == "escape" then
-        -- Gamestate.pop()
-        Gamestate.switch(Gamestates["title"])
-    elseif key == "space" then
+    if key == "escape" or key == "space" or key == "return" or key == "enter" then
         -- Gamestate.pop()
         Gamestate.switch(Gamestates["title"])
     end

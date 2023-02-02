@@ -133,20 +133,4 @@ function M:spin()
     end)
 end
 
---
--- JUICE
---
-
-function M:addJuice()
-    for _, tile in pairs(self.tiles) do
-        tile:addJuice()
-    end
-end
-
-function M:removeJuice()
-    for _, tile in pairs(self.tiles) do
-        tile:removeJuice()
-    end
-end
-
 return M

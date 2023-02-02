@@ -4,27 +4,59 @@ local M = Class { __includes = BaseGamestate }
 
 
 function M:init(data)
-    self.rig      = Rig()
-    self.isPaused = false
+    self.rig           = Rig()
+    self.timer         = Timer.new()
+    self.isPaused      = false
+    self.potionBuying  = Animation(Sheet["Potion"]):at(64):offset(-12, -12):scale(3, 3):once()
+    self.shieldBuying  = Animation(Sheet["Shield"]):at(64):offset(-12, -12):scale(3, 3):once()
+    self.coinGain      = Animation(Sheet["Coin"]):at(64):offset(-12, -12):scale(2, 2):once()
+    self.heartShielded = Animation(Sheet["Shield"]):at(64):offset(-12, -12):scale(2, 2):once()
+    self.heartHealing  = Animation(Sheet["Heart_Heal"]):at(64):offset(-12, -12):scale(2, 2):once()
+    self.heartHurting  = Animation(Sheet["Heart_Hurt"]):at(64):offset(-12, -12):scale(2, 2):once()
     --
     self:initUI()
-
-    -- Particles = require "res.particles.RainingCoins"
 end
 
 function M:update(dt)
     if not self.isPaused then
+        self.timer:update(dt)
         self.rig:update(dt)
-    end
 
-    -- Particles[1].system:update(dt)
+        -- icon animations..
+        if self.coinGain.isPlaying then
+            self.coinGain:update(dt)
+        end
+        if self.shieldBuying.isPlaying then
+            self.shieldBuying:update(dt)
+        end
+        if self.potionBuying.isPlaying then
+            self.potionBuying:update(dt)
+        end
+        if self.heartShielded.isPlaying then
+            self.heartShielded:update(dt)
+        end
+        if self.heartHealing.isPlaying then
+            self.heartHealing:update(dt)
+        end
+        if self.heartHurting.isPlaying then
+            self.heartHurting:update(dt)
+        end
+
+        -- particles..
+        if Config.particles.RainingCoins.isActive then
+            Config.particles.RainingCoins:update(dt)
+        end
+        if Config.particles.AwardingShield.isActive then
+            Config.particles.AwardingShield:update(dt)
+        end
+    end
 end
 
 function M:draw()
     --
     -- background..
     lg.setColor(Config.color.white)
-    lg.draw(Config.image.bg[3])
+    lg.draw(Config.image.bg.game)
 
     self.rig:draw()
     --
@@ -32,9 +64,17 @@ function M:draw()
         self:drawUI()
     end
 
-    -- lg.setBlendMode(Particles[1].blendMode)
-    -- lg.draw(Particles[1].system, Config.width * 0.5, Config.height * 0.5)
-    -- lg.setBlendMode("alpha")
+    -- raining coins..
+    if Config.particles.RainingCoins.isActive then
+        lg.setColor(Config.color.white)
+        lg.draw(Config.particles.RainingCoins)
+    end
+
+    -- awarding shield particles..
+    if Config.particles.AwardingShield.isActive then
+        lg.setColor(Config.color.white)
+        lg.draw(Config.particles.AwardingShield, Config.width * 0.5, Config.height * 0.5)
+    end
 end
 
 --
@@ -63,17 +103,73 @@ function M:leave()
     self:hideUI()
 end
 
+function M:payout(value, amount)
+    if value == "gold" then
+        --
+        -- raining coin..
+        Config.particles.RainingCoins:start()
+        self.timer:after(Config.rig.juiceDuration, function()
+            Config.particles.RainingCoins:stop()
+        end)
+
+        -- award gold..
+        self.coinGain:play()
+        _GAME[value] = _GAME[value] + amount
+        --
+    elseif value == "hp" then
+        --
+        -- award hp..
+        self.heartHealing:play()
+        _GAME[value] = math.min(100, _GAME[value] + amount)
+        --
+    elseif value == "hit" then
+        if _GAME["shield"] > 0 then
+            --
+            -- shield heart..
+            self.heartShielded:play()
+            _GAME["shield"] = _GAME["shield"] - 1
+        else
+            --
+            -- remove hp..
+            self.heartHurting:play()
+            _GAME["hp"] = math.max(0, _GAME["hp"] - amount)
+        end
+    elseif value == "shield" then
+        --
+        -- Award Shield..
+        Config.particles.AwardingShield:start()
+        Timer.after(Config.rig.juiceDuration, function()
+            Config.particles.AwardingShield:stop()
+        end)
+
+        -- award shield..
+        _GAME[value] = math.min(3, _GAME[value] + 1)
+    end
+
+    --
+    SaveGame()
+end
+
 function M:buyItem(key)
     local item = Config.store[key]
 
     if _GAME["gold"] - Config.rig.cost >= item.gold then
         if item.value == "hp" and _GAME["hp"] < 100 then
-            --TODO: hp juice
+            -- award hp..
+            self.heartHealing:play()
+            self.potionBuying:play()
             _GAME["hp"] = math.min(100, _GAME["hp"] + item.payout)
+            --
+            -- take gold..
+            self.coinGain:play()
             _GAME["gold"] = _GAME["gold"] - item.gold
         elseif item.value == "shield" and _GAME["shield"] < 3 then
-            --TODO: shield juice
+            -- award shield..
+            self.shieldBuying:play()
             _GAME["shield"] = math.min(3, _GAME["shield"] + 1)
+            --
+            -- take gold..
+            self.coinGain:play()
             _GAME["gold"] = _GAME["gold"] - item.gold
         end
     end
@@ -90,6 +186,14 @@ function M:keypressed(key)
         self.rig:trigger()
     elseif key == "1" or key == "2" then
         self:buyItem(key)
+        -- elseif key == "7" then
+        --     self:payout("gold", 5)
+        -- elseif key == "8" then
+        --     self:payout("hp", 10)
+        -- elseif key == "9" then
+        --     self:payout("shield", 1)
+        -- elseif key == "0" then
+        --     self:payout("hit", 10)
     end
 end
 
@@ -149,7 +253,7 @@ function M:drawUI()
             lg.printf("THE HERO", x + ox * 5, y + oy, w, "left")
 
             -- hp
-            local hpPct = math.max(0, _GAME.hp / 100 * 0.88)
+            local hpPct = math.max(0, _GAME["hp"] / 100 * 0.88)
 
             lg.setColor(Config.color.hp_bg)
             lg.rectangle('fill', x + ox * 2, y + oy * 5, w * 0.88, oy * 2, 5, 5)
@@ -158,7 +262,17 @@ function M:drawUI()
             lg.setColor(Config.color.hp_border)
             lg.rectangle('line', x + ox * 2, y + oy * 5, w * 0.88, oy * 2, 5, 5)
             lg.setColor(Config.color.white)
-            Sheet.Symbol:draw("Heart", x + ox, y + oy * 3, 0, 1.5, 1.5)
+            --
+            if self.heartHurting.isPlaying then
+                self.heartHurting:draw(x + ox, y + oy * 3)
+            elseif self.heartHealing.isPlaying then
+                self.heartHealing:draw(x + ox, y + oy * 3)
+            else
+                Sheet.Symbol:draw("Heart", x + ox, y + oy * 3, 0, 1.5, 1.5)
+            end
+            if self.heartShielded.isPlaying then
+                self.heartShielded:draw(x + ox, y + oy * 3)
+            end
 
             -- shield power-ups..
             lg.setColor(Config.color.header)
@@ -197,9 +311,33 @@ function M:drawUI()
             lg.rectangle('line', x + w * 0.725, y + h * 0.1, ox * 8, oy * 10, 5, 5)
             lg.print("[2] - 500", x + w * 0.725, y + h * 0.775)
 
-            lg.setColor(Config.color.white)
-            Sheet.Symbol:draw("Potion", x + w * 0.51, y + h * 0.15, 0, 2, 2)
-            Sheet.Symbol:draw("Shield", x + w * 0.76, y + h * 0.15, 0, 2, 2)
+            -- Potion
+            if self.potionBuying.isPlaying then
+                lg.setColor(Config.color.white)
+                self.potionBuying:draw(x + w * 0.51, y + h * 0.15)
+            else
+                if _GAME["gold"] - Config.rig.cost >= Config.store["1"].gold and _GAME["hp"] < 100 then
+                    lg.setColor(Config.color.white)
+                    Sheet.Symbol:draw("Potion", x + w * 0.51, y + h * 0.15, 0, 2, 2)
+                else
+                    lg.setColor(Config.color.overlay)
+                    Sheet.Symbol:draw("Potion", x + w * 0.51, y + h * 0.15, 0, 2, 2)
+                end
+            end
+
+            -- Shield
+            if self.shieldBuying.isPlaying then
+                lg.setColor(Config.color.white)
+                self.shieldBuying:draw(x + w * 0.76, y + h * 0.15)
+            else
+                if _GAME["gold"] - Config.rig.cost >= Config.store["2"].gold and _GAME["shield"] < 3 then
+                    lg.setColor(Config.color.white)
+                    Sheet.Symbol:draw("Shield", x + w * 0.76, y + h * 0.15, 0, 2, 2)
+                else
+                    lg.setColor(Config.color.overlay)
+                    Sheet.Symbol:draw("Shield", x + w * 0.76, y + h * 0.15, 0, 2, 2)
+                end
+            end
         elseif name == "Bank" then
             --
             -- title
@@ -211,7 +349,11 @@ function M:drawUI()
 
             -- gold
             lg.setColor(Config.color.white)
-            Sheet.Symbol:draw("Coin", x + ox, y + oy, 0, 1.5, 1.5)
+            if self.coinGain.isPlaying then
+                self.coinGain:draw(x + ox, y + oy)
+            else
+                Sheet.Symbol:draw("Coin", x + ox, y + oy, 0, 1.5, 1.5)
+            end
             lg.setFont(Config.font.lg)
             lg.setColor(Config.color.gold)
             lg.printf(_GAME.gold .. "", x, y + h * 0.4, w * 0.9, "right")

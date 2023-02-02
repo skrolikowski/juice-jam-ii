@@ -25,11 +25,13 @@ Config = {
         ["2"] = { gold = 500, payout = 001, value = "shield" },
     },
     rig = {
-        cost          = 50,
-        spinLength    = 1.5,
-        numReels      = 5,
-        numRows       = 5,
-        paylines      = {
+        cost           = 50,
+        payoutDuration = 2.5,
+        juiceDuration  = 2,
+        spinLength     = 1.5,
+        numReels       = 5,
+        numRows        = 5,
+        paylines       = {
             { 2, 2, 2, 2, 2 },
             { 3, 3, 3, 3, 3 },
             { 4, 4, 4, 4, 4 },
@@ -38,17 +40,17 @@ Config = {
             { 2, 2, 3, 4, 4 },
             { 4, 4, 3, 2, 2 },
         },
-        sequences     = {
+        sequences      = {
             [1] = { min = 3, payout = 050, value = "gold" },
             [2] = { min = 3, payout = 100, value = "gold" },
         },
-        scatters      = {
+        scatters       = {
             [3] = { min = 3, payout = 250, value = "gold" },
             [4] = { min = 3, payout = 025, value = "hp" },
             [5] = { min = 3, payout = 001, value = "shield" },
             [6] = { min = 3, payout = 010, value = "hit" },
         },
-        symbolWeights = {
+        symbolWeights  = {
             {
                 030, -- Coin
                 010, -- Diamond
@@ -106,6 +108,11 @@ Config = {
             }
         },
     },
+    particles = {
+        RainingCoins   = require "res.particles.RainingCoins",
+        MouseCoins     = require "res.particles.MouseCoins",
+        AwardingShield = require "res.particles.AwardingShield",
+    },
     reel = {
         spinEase        = "linear",
         spinDuration    = 0.015,
@@ -131,19 +138,20 @@ Config = {
         gold      = ConfigUtil.hex2rgb("FFD700"),
     },
     font = {
-        xs = lg.newFont('res/font/CarterOne-Regular.ttf', 12),
-        sm = lg.newFont('res/font/CarterOne-Regular.ttf', 18),
-        md = lg.newFont('res/font/CarterOne-Regular.ttf', 24),
-        lg = lg.newFont('res/font/CarterOne-Regular.ttf', 32),
-        xl = lg.newFont('res/font/CarterOne-Regular.ttf', 48)
+        xs  = lg.newFont('res/font/CarterOne-Regular.ttf', 12),
+        sm  = lg.newFont('res/font/CarterOne-Regular.ttf', 18),
+        md  = lg.newFont('res/font/CarterOne-Regular.ttf', 24),
+        lg  = lg.newFont('res/font/CarterOne-Regular.ttf', 32),
+        xl  = lg.newFont('res/font/CarterOne-Regular.ttf', 48),
+        xxl = lg.newFont('res/font/CarterOne-Regular.ttf', 72)
     },
     image = {
         bg     = {
-            lg.newImage('res/image/Bridge 1.png'),
-            lg.newImage('res/image/Bridge 3.png'),
-            lg.newImage('res/image/Cavern 3.png'),
-            lg.newImage('res/image/Crystals 1.png'),
-            lg.newImage('res/image/Interior 2.png'),
+            game = lg.newImage('res/image/Bridge 1.png'),
+            dead = lg.newImage('res/image/Bridge 3.png'),
+            title = lg.newImage('res/image/Cavern 3.png'),
+            -- game = lg.newImage('res/image/Crystals 1.png'),
+            -- game = lg.newImage('res/image/Interior 2.png'),
         },
         rules  = lg.newImage('res/image/rules.png'),
         symbol = {

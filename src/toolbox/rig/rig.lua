@@ -121,14 +121,12 @@ function M:handlePostSpin()
     -- Delay for tiles to lock in place..
     self.timer:after(0.5 * Config.rig.numReels, function()
         self.results = {} -- reset
-        self.isSpinning = false
         --
         self:checkForScatters()
         self:checkForSequences()
         self:handlePayouts()
         --
-        SaveGame()
-        --
+        self.isSpinning = false
         self:checkForGameOver()
     end)
 end
@@ -223,55 +221,34 @@ function M:checkPayline(payline)
 end
 
 function M:handlePayouts()
-    for _, data in pairs(self.results) do
-        --
-        -- highlight payline..
-        for _, tile in pairs(data.tiles) do
-            -- tile:highlight()
-        end
+    if #self.results > 0 then
+        local payout = table.remove(self.results, 1)
 
-        -- deal payout..
-        self:handlePayout(data.metadata, #data.tiles)
+        self:highlightTiles(payout.tiles)
+        self:handlePayout(payout.metadata, payout.tiles)
+
+        self.timer:after(Config.rig.payoutDuration, function()
+            self:unhighlightTiles(payout.tiles)
+            self:handlePayouts()
+        end)
     end
 end
 
-function M:handlePayout(metadata, symbolCount)
+function M:handlePayout(metadata, tiles)
     local payoutAmount = metadata.payout
     local payoutValue  = metadata.value
 
     -- handle multiplier..
-    if symbolCount == metadata.min + 1 then
+    if #tiles == metadata.min + 1 then
         -- 2x payout..?
         payoutAmount = metadata.payout * 2
-    elseif symbolCount >= metadata.min + 2 then
+    elseif #tiles >= metadata.min + 2 then
         -- 5x payout..?
         payoutAmount = metadata.payout * 5
     end
 
-    print("Payout", payoutValue, payoutAmount)
-    if payoutValue == "gold" then
-        --
-        --TODO: add gold juice
-        _GAME[payoutValue] = _GAME[payoutValue] + payoutAmount
-    elseif payoutValue == "hp" then
-        --
-        --TODO: add hp juice
-        _GAME["hp"] = math.min(100, _GAME["hp"] + payoutAmount)
-    elseif payoutValue == "hit" then
-        if _GAME["shield"] > 0 then
-            --
-            --TODO: remove shield juice
-            _GAME["shield"] = _GAME["shield"] - 1
-        else
-            --
-            --TODO: remove hp juice
-            _GAME["hp"] = math.max(0, _GAME["hp"] - payoutAmount)
-        end
-    elseif payoutValue == "shield" then
-        --
-        --TODO: add shield juice
-        _GAME[payoutValue] = math.max(3, _GAME[payoutValue] + 1)
-    end
+    --
+    Gamestate.current():payout(payoutValue, payoutAmount)
 end
 
 function M:checkForGameOver()
@@ -281,20 +258,6 @@ function M:checkForGameOver()
         Gamestate:current():onGameOver()
     end
 end
-
--- function M:debugResults()
---     local results = {}
---     for rowIndex = 2, Config.rig.numRows - 1 do
---         local line = {}
---         for reelIndex = 1, Config.rig.numReels do
---             local reel = self.reels[reelIndex]
---             local tile = reel.tiles[rowIndex]
---             table.insert(line, Config.image.symbolName[tile.symbolIndex])
---         end
---         table.insert(results, table.concat(line, "\t"))
---     end
---     print(table.concat(results, "\n"))
--- end
 
 --
 -- JUICE
@@ -315,15 +278,15 @@ function M:shake(duration, _fx, _fy)
         end)
 end
 
-function M:addJuice()
-    for _, reel in pairs(self.reels) do
-        reel:addJuice()
+function M:highlightTiles(tiles)
+    for _, tile in pairs(tiles) do
+        tile:highlight()
     end
 end
 
-function M:removeJuice()
-    for _, reel in pairs(self.reels) do
-        reel:removeJuice()
+function M:unhighlightTiles(tiles)
+    for _, tile in pairs(tiles) do
+        tile:unhighlight()
     end
 end
 
