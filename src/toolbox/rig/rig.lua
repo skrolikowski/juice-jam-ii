@@ -253,9 +253,9 @@ end
 
 function M:checkForGameOver()
     if _GAME.hp == 0 then
-        Gamestate:current():onGameOver()
+        Gamestate.current():onGameOver()
     elseif _GAME.gold < Config.rig.cost then
-        Gamestate:current():onGameOver()
+        Gamestate.current():onGameOver()
     end
 end
 

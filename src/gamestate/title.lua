@@ -72,7 +72,7 @@ end
 ---
 
 function M:keypressed(key)
-    if key == "escape" then
+    if key == "q" then
         love.event.quit()
     elseif key == "return" or key == "enter" or key == "space" then
         if self.selection == 2 then
@@ -147,7 +147,7 @@ function M:drawUI()
         if name == "Esc" then
             lg.setColor(Config.color.white)
             lg.setFont(Config.font.sm)
-            lg.printf("[Esc] to Quit", x, y + h * 0.1, w, "left")
+            lg.printf("[Q] to Quit", x, y + h * 0.1, w, "left")
         elseif name == "Center" then
             lg.setColor(Config.color.white)
             lg.setFont(Config.font.md)

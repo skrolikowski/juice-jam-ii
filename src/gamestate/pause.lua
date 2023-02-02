@@ -5,12 +5,22 @@ local M = Class { __includes = BaseGamestate }
 
 function M:init()
     self:initUI()
+    self.offset = Vec2(self.panels.Center.x, self.panels.Center.y)
 end
 
 function M:enter(from, ...)
     BaseGamestate.enter(self, from, ...)
     --
     self:showUI()
+
+    local ox, oy = self.offset:unpack()
+    local fx, fy = 1, 1
+
+    self.shake = Timer.every(0.005,
+        function()
+            self.offset.x = ox + math.random(-fx, fy)
+            self.offset.y = oy + math.random(-fx, fy)
+        end)
 
     -- sfx
     Config.audio.bgLoop:pause()
@@ -20,6 +30,8 @@ function M:leave()
     BaseGamestate.leave(self)
     --
     self:hideUI()
+    --
+    Timer.cancel(self.shake)
 end
 
 function M:draw()
@@ -73,21 +85,17 @@ function M:initUI()
     BaseGamestate.initUI(self)
     --
 
-    local x1, y1 = Plan.relative(0.05), Plan.relative(0.05)
-    local x2, y2 = Plan.relative(0.30), Plan.relative(0.05)
-    -- local x3, y3 = Plan.relative(0.65), Plan.relative(0.05)
-    local w1, h1 = Plan.relative(0.40), Plan.relative(0.40)
-    local w2, h2 = Plan.relative(0.25), Plan.relative(0.50)
+    local x1, y1 = Plan.relative(0.025), Plan.relative(0.925)
+    local x2, y2 = Plan.center(), Plan.center()
+    local w1, h1 = Plan.relative(0.20), Plan.relative(0.10)
+    local w2, h2 = Plan.relative(0.40), Plan.relative(0.20)
 
     local r1 = Rules.new():addX(x1):addY(y1):addWidth(w1):addHeight(h1)
     local r2 = Rules.new():addX(x2):addY(y2):addWidth(w2):addHeight(h2)
-    -- local r3 = Rules.new():addX(x3):addY(y3):addWidth(w1):addHeight(h1)
 
     self.panels = {
-        Rules = Panel:new(r1, Config.color.panel2),
-        Center = Panel:new(r2, Config.color.panel2),
-        -- Scatter = Panel:new(r3, Config.color.panel2),
-        -- Info = Panel:new(r4, Config.color.panel2),
+        Esc    = Panel:new(r1, Config.color.clear),
+        Center = Panel:new(r2, Config.color.clear),
     }
 end
 
@@ -96,12 +104,16 @@ function M:drawUI()
     --
     for name, panel in pairs(self.panels) do
         local x, y, w, h = panel:Container()
+        local ox, oy     = self.offset:unpack()
 
-        if name == "Center" then
+        if name == "Esc" then
+            lg.setColor(Config.color.white)
+            lg.setFont(Config.font.sm)
+            lg.printf("[Q] to Quit", x, y + h * 0.1, w, "left")
+        elseif name == "Center" then
             lg.setColor(Config.color.white)
             lg.setFont(Config.font.xl)
-            lg.printf("PAUSED", x, y + h * 0.3, w, "center")
-            -- lg.draw(Config.image.rules, x, y * 0.25, 0, 1.5)
+            lg.printf("PAUSED", x + ox, y + h * 0.3 + oy, w, "center")
         end
     end
 end
