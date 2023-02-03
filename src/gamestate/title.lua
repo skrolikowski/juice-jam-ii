@@ -5,14 +5,6 @@ local M = Class { __includes = BaseGamestate }
 function M:init(data)
     self:initUI()
     self.offset = Vec2(self.panels.Center.x, self.panels.Center.y)
-    --
-    if CanContinueGame() then
-        self.options = { "New Game", "Continue Game" }
-        self.selection = 2
-    else
-        self.options = { "New Game" }
-        self.selection = 1
-    end
 end
 
 function M:update(dt)
@@ -43,6 +35,16 @@ end
 function M:enter(from, ...)
     BaseGamestate.enter(self, from, ...)
     --
+    if CanContinueGame() then
+        self.options = { "New Game", "Continue Game" }
+        self.selection = 2
+        self.gameData = GetGameData()
+    else
+        self.options = { "New Game" }
+        self.selection = 1
+    end
+
+    --
     self:showUI()
     Config.particles.MouseCoins:start()
 
@@ -54,9 +56,6 @@ function M:enter(from, ...)
             self.offset.x = ox + math.random(-fx, fy)
             self.offset.y = oy + math.random(-fx, fy)
         end)
-
-    -- sfx
-    Config.audio.bgLoop:play()
 end
 
 function M:leave()
@@ -75,18 +74,26 @@ function M:keypressed(key)
     if key == "q" then
         love.event.quit()
     elseif key == "return" or key == "enter" or key == "space" then
+        Config.audio.ui.pick:play()
+        --
         if self.selection == 2 then
             self:onContinueGame()
         else
             self:onNewGame()
         end
     elseif key == "up" or key == "a" then
+        Config.audio.ui.select:stop()
+        Config.audio.ui.select:play()
+        --
         self.selection = self.selection - 1
         --
         if self.selection < 0 then
             self.selection = #self.options
         end
     elseif key == "down" or key == "d" then
+        Config.audio.ui.select:stop()
+        Config.audio.ui.select:play()
+        --
         self.selection = self.selection + 1
         --
         if self.selection > #self.options then
@@ -156,13 +163,24 @@ function M:drawUI()
             lg.printf("SLOT RAIDER", x + ox, y + h * 0.15 + ox, w, "center")
 
             lg.setFont(Config.font.lg)
-            lg.print("NEW GAME", x + w * 0.5, y + h * 0.65)
+            if self.selection == 1 then
+                lg.print("NEW GAME", x + w * 0.5 + ox, y + h * 0.65 + oy)
+            else
+                lg.print("NEW GAME", x + w * 0.5, y + h * 0.65)
+            end
             if #self.options >= 2 then
-                lg.print("CONTINUE GAME", x + w * 0.5, y + h * 0.8)
+                if self.selection == 2 then
+                    lg.print("CONTINUE GAME", x + w * 0.5 + ox, y + h * 0.75 + oy)
+                else
+                    lg.print("CONTINUE GAME", x + w * 0.5, y + h * 0.75)
+                end
+                lg.setFont(Config.font.xs)
+                lg.printf(self.gameData.gold .. " G / " .. self.gameData.hp .. " HP", x, y + h * 0.85, w - 32,
+                    "right")
             end
 
             if self.selection == 2 then
-                Sheet.Symbol:draw("Candle", x + w * 0.35, y + h * 0.80, 0, 1.5, 1.5)
+                Sheet.Symbol:draw("Candle", x + w * 0.35, y + h * 0.75, 0, 1.5, 1.5)
             else
                 Sheet.Symbol:draw("Candle", x + w * 0.35, y + h * 0.65, 0, 1.5, 1.5)
             end

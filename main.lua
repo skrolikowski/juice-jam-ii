@@ -20,12 +20,13 @@ require 'src.config'
 lg.setDefaultFilter('nearest', 'nearest')
 -- random seed
 math.randomseed(os.time())
---
+
+-- Music
 Config.audio.bgLoop:play()
 Config.audio.bgLoop:setLooping(true)
 
 -- lib packages..
-pprint    = require "lib.pprint.pprint"
+-- pprint    = require "lib.pprint.pprint"
 Class     = require "lib.hump.class"
 Timer     = require "lib.hump.timer"
 Gamestate = require "lib.hump.gamestate"
@@ -38,14 +39,14 @@ require "src.ui"
 -- Load Game
 --
 function love.load()
-    LoadGame()
+    -- LoadGame()
     --
     Config.particles.AwardingShield:stop()
     Config.particles.MouseCoins:stop()
     Config.particles.RainingCoins:stop()
     --
     Gamestate.registerEvents()
-    Gamestate.switch(Gamestates['game'])
+    Gamestate.switch(Gamestates['title'])
 end
 
 -- Update Timer
@@ -71,14 +72,16 @@ function CanContinueGame()
     return false
 end
 
+function GetGameData()
+    return Saver:load('juice-jam-ii')
+end
+
 function LoadGame()
     if Saver:exists('juice-jam-ii') then
         _GAME = Saver:load('juice-jam-ii')
     else
         ResetGame()
     end
-    --
-    ResetGame()
 end
 
 function ResetGame()

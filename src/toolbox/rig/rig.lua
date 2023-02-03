@@ -68,7 +68,6 @@ function M:trigger()
         self.timer:cancel(self.autoStopHandle)
         --
         Config.audio.spinLoop:stop()
-        Config.audio.spinStop:play()
         --
         for i, reel in pairs(self.reels) do
             self.timer:after(0.05 * (i - 1),
@@ -160,7 +159,6 @@ end
 function M:handlePayouts()
     if #self.matches > 0 then
         local match = table.remove(self.matches, 1)
-        pprint(match)
 
         self:highlightTiles(match.tiles)
         self:handlePayout(match.symbol, match.tiles)
@@ -172,7 +170,6 @@ function M:handlePayouts()
             end)
     else
         self.isSpinning = false
-        self:checkForGameOver()
     end
 end
 
@@ -192,13 +189,15 @@ function M:handlePayout(symbol, tiles)
 
     --
     Gamestate.current():payout(payoutValue, payoutAmount)
+    --
+    self:checkForGameOver()
 end
 
 function M:checkForGameOver()
     if _GAME.hp == 0 then
-        Gamestate.current():onGameOver()
+        Gamestate.current():onGameOver("hero_dead")
     elseif _GAME.gold < Config.rig.cost then
-        Gamestate.current():onGameOver()
+        Gamestate.current():onGameOver("hero_broke")
     end
 end
 

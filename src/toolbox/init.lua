@@ -1,20 +1,13 @@
---
+-- Utilities
 --
 require 'src.toolbox.graphics'
 --
-List   = require 'src.toolbox.structures.list'
-Grid   = require 'src.toolbox.structures.grid'
-Queue  = require 'src.toolbox.structures.queue'
-PQueue = require 'src.toolbox.structures.pqueue'
-Stack  = require 'src.toolbox.structures.stack'
 
 --
 AABB = require 'src.toolbox.math.AABB'
 Vec2 = require 'src.toolbox.math.Vec2'
--- Dice = require 'src.toolbox.math.dice',
 
 --
-Event = require 'src.toolbox.behavior.event'
 Saver = require 'src.toolbox.saver'
 
 --

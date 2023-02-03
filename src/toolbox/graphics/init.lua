@@ -15,4 +15,5 @@ Sheet       = {
     Shield     = Spritesheet("res/image/sheet/Shield.json"),
     Skull      = Spritesheet("res/image/sheet/Skull.json"),
     Skull_End  = Spritesheet("res/image/sheet/Skull_End.json"),
+    Slime      = Spritesheet("res/image/sheet/Slime.json"),
 }

@@ -7,13 +7,6 @@ function Vec2:init(x, y)
     self.y = y or 0
 end
 
--- function Vec2:fromGridIndex(grid, idx)
---     local cell = grid:getCellByIndex(idx)
---     if (cell) then
---         return Vec2(cell.aabb:center())
---     end
--- end
-
 function Vec2:fromPolar(angle, mag)
     return Vec2(
         self.x + math.cos(angle) * (mag or 1),

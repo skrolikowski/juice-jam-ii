@@ -21,8 +21,8 @@ Config = {
     width = lg.getWidth(),
     height = lg.getHeight(),
     store = {
-        ["1"] = { gold = 100, payout = 100, value = "hp" },
-        ["2"] = { gold = 500, payout = 001, value = "shield" },
+        ["1"] = { gold = 50, payout = 100, value = "hp" },
+        ["2"] = { gold = 100, payout = 001, value = "shield" },
     },
     rig = {
         cost           = 5,
@@ -32,26 +32,28 @@ Config = {
         numReels       = 5,
         numRows        = 5,
         payout         = {
-            ["Coin"]    = { min = 3, payout = 001, value = "gold" },
+            ["Coin"]    = { min = 3, payout = 003, value = "gold" },
             ["Ingot"]   = { min = 3, payout = 005, value = "gold" },
             ["Diamond"] = { min = 3, payout = 010, value = "gold" },
             ["Chest"]   = { min = 3, payout = 020, value = "gold" },
             ["Apple"]   = { min = 3, payout = 020, value = "hp" },
             ["Shield"]  = { min = 3, payout = 001, value = "shield" },
-            ["Skull"]   = { min = 3, payout = 010, value = "hit" },
+            ["Skull"]   = { min = 3, payout = 100, value = "hit" },
+            ["Slime"]   = { min = 3, payout = 100, value = "hit" },
         },
         symbolWeights  = {
             {
                 015, -- Coin
-                010, -- Ingot
+                008, -- Ingot
                 005, -- Diamond
                 003, -- Chest
                 005, -- Apple
                 003, -- Shield
-                015, -- Skull
-                005, -- Book
-                005, -- Candle
-                005, -- Feather
+                010, -- Skull
+                015, -- Slime
+                003, -- Book
+                003, -- Candle
+                003, -- Feather
             },
         },
     },
@@ -85,7 +87,7 @@ Config = {
         gold      = ConfigUtil.hex2rgb("FFD700"),
     },
     font = {
-        xs  = lg.newFont('res/font/CarterOne-Regular.ttf', 12),
+        xs  = lg.newFont('res/font/CarterOne-Regular.ttf', 14),
         sm  = lg.newFont('res/font/CarterOne-Regular.ttf', 18),
         md  = lg.newFont('res/font/CarterOne-Regular.ttf', 24),
         lg  = lg.newFont('res/font/CarterOne-Regular.ttf', 32),
@@ -94,13 +96,10 @@ Config = {
     },
     image = {
         bg     = {
-            game = lg.newImage('res/image/Bridge 1.png'),
-            dead = lg.newImage('res/image/Bridge 3.png'),
+            game  = lg.newImage('res/image/Bridge 1.png'),
+            dead  = lg.newImage('res/image/Bridge 3.png'),
             title = lg.newImage('res/image/Cavern 3.png'),
-            -- game = lg.newImage('res/image/Crystals 1.png'),
-            -- game = lg.newImage('res/image/Interior 2.png'),
         },
-        rules  = lg.newImage('res/image/rules.png'),
         symbol = {
             "Coin",
             "Ingot",
@@ -109,6 +108,7 @@ Config = {
             "Apple",
             "Shield",
             "Skull",
+            "Slime",
             "Book",
             "Candle",
             "Feather",
@@ -118,14 +118,24 @@ Config = {
         bgLoop     = la.newSource('res/audio/Ambience Dark Chamber Loop.wav', 'stream'),
         spinLoop   = la.newSource('res/audio/Energy Charge.wav', 'static'),
         spinStart  = la.newSource('res/audio/Activate Crystal.wav', "static"),
-        spinStop   = la.newSource('res/audio/Arcane Reveal Transition.wav', "static"),
         spinReveal =
         {
-            la.newSource('res/audio/Arcane Bright Light 01.wav', "static"),
-            la.newSource('res/audio/Arcane Bright Light 01.wav', "static"),
-            la.newSource('res/audio/Arcane Bright Light 01.wav', "static"),
-            la.newSource('res/audio/Arcane Bright Light 01.wav', "static"),
-            la.newSource('res/audio/Arcane Bright Light 01.wav', "static"),
+            la.newSource('res/audio/Activation Short 3rd.wav', "static"),
+            la.newSource('res/audio/Activation Short 3rd.wav', "static"),
+            la.newSource('res/audio/Activation Short 5th.wav', "static"),
+            la.newSource('res/audio/Activation Short 5th.wav', "static"),
+            la.newSource('res/audio/Activate Octave Delay.wav', "static"),
+        },
+        ui         = {
+            select = la.newSource('res/audio/UI Select Dark.wav', "static"),
+            pick   = la.newSource('res/audio/UI Short Chime.wav', "static"),
+        },
+        payout     = {
+            shield_lose = la.newSource('res/audio/Activate Stasis Field.wav', "static"),
+            shield_gain = la.newSource('res/audio/Collect Item.wav', "static"),
+            coin_gain   = la.newSource('res/audio/Coin_Counter_10_loop.wav', "static"),
+            hp_gain     = la.newSource('res/audio/Bright Noise Echo.wav', "static"),
+            hp_lose     = la.newSource('res/audio/Dark Activation Distorted.wav', "static"),
         }
     }
 }

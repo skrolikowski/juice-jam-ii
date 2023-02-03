@@ -108,7 +108,10 @@ function M:payout(value, amount)
         --
         -- raining coin..
         Config.particles.RainingCoins:start()
+        Config.audio.payout.coin_gain:play()
+        Config.audio.payout.coin_gain:setLooping(true)
         self.timer:after(Config.rig.juiceDuration, function()
+            Config.audio.payout.coin_gain:stop()
             Config.particles.RainingCoins:stop()
         end)
 
@@ -122,6 +125,7 @@ function M:payout(value, amount)
         -- award hp..
         self.heartHealing:play()
         self.payoutMsg = "You Gain " .. amount .. "HP!"
+        Config.audio.payout.hp_gain:play()
         _GAME[value] = math.min(100, _GAME[value] + amount)
         --
     elseif value == "hit" then
@@ -129,6 +133,7 @@ function M:payout(value, amount)
             --
             -- shield heart..
             self.heartShielded:play()
+            Config.audio.payout.shield_lose:play()
             self.payoutMsg = "Shield Lost!"
             _GAME["shield"] = _GAME["shield"] - 1
         else
@@ -136,6 +141,7 @@ function M:payout(value, amount)
             -- remove hp..
             self.heartHurting:play()
             self.payoutMsg = "You Lost " .. amount .. "HP!"
+            Config.audio.payout.hp_lose:play()
             _GAME["hp"] = math.max(0, _GAME["hp"] - amount)
         end
     elseif value == "shield" then
@@ -148,6 +154,7 @@ function M:payout(value, amount)
 
         -- award shield..
         self.payoutMsg = "Shield Gained!"
+        Config.audio.payout.shield_gain:play()
         _GAME[value] = math.min(3, _GAME[value] + 1)
     end
 
@@ -163,6 +170,7 @@ function M:buyItem(key)
             -- award hp..
             self.heartHealing:play()
             self.potionBuying:play()
+            Config.audio.payout.hp_gain:play()
             _GAME["hp"] = math.min(100, _GAME["hp"] + item.payout)
             --
             -- take gold..
@@ -171,6 +179,7 @@ function M:buyItem(key)
         elseif item.value == "shield" and _GAME["shield"] < 3 then
             -- award shield..
             self.shieldBuying:play()
+            Config.audio.payout.shield_gain:play()
             _GAME["shield"] = math.min(3, _GAME["shield"] + 1)
             --
             -- take gold..
@@ -213,6 +222,10 @@ function M:onPause()
     Gamestate.push(Gamestates['pause'])
 end
 
+function M:onGameOver(gamestate)
+    Gamestate.push(Gamestates[gamestate])
+end
+
 ---
 -- UI
 ---
@@ -226,24 +239,28 @@ function M:initUI()
     local x3, y3 = Plan.relative(0.01), Plan.relative(0.85 - 0.01)
     local x4, y4 = Plan.center(), Plan.relative(0.85 - 0.01)
     local x5, y5 = Plan.center(), Plan.relative(0.10)
+    local x6, y6 = Plan.relative(0.775), Plan.relative(0.90)
     local w1, h1 = Plan.relative(0.25), Plan.relative(0.15)
     local w2, h2 = Plan.relative(0.20), Plan.relative(0.10)
     local w3, h3 = Plan.relative(0.30), Plan.relative(0.15)
     local w4, h4 = Plan.relative(0.25), Plan.relative(0.05)
     local w5, h5 = Plan.relative(0.25), Plan.relative(0.05)
+    local w6, h6 = Plan.relative(0.20), Plan.relative(0.10)
 
     local r1 = Rules.new():addX(x1):addY(y1):addWidth(w1):addHeight(h1)
     local r2 = Rules.new():addX(x2):addY(y2):addWidth(w2):addHeight(h2)
     local r3 = Rules.new():addX(x3):addY(y3):addWidth(w3):addHeight(h3)
     local r4 = Rules.new():addX(x4):addY(y4):addWidth(w4):addHeight(h4)
     local r5 = Rules.new():addX(x5):addY(y5):addWidth(w5):addHeight(h5)
+    local r6 = Rules.new():addX(x6):addY(y6):addWidth(w6):addHeight(h6)
 
     self.panels = {
         Player = Panel:new(r1),
         Bank   = Panel:new(r2),
         Store  = Panel:new(r3),
         Info   = Panel:new(r4),
-        Payout = Panel:new(r5)
+        Payout = Panel:new(r5),
+        Esc    = Panel:new(r6, Config.color.clear),
     }
 end
 
@@ -254,18 +271,30 @@ function M:drawUI()
         local x, y, w, h = panel:Container()
         local ox, oy     = 12, 8
 
-        if name == "Payout" and self.payoutMsg then
+        if name == "Esc" then
+            lg.setColor(Config.color.white)
+            lg.setFont(Config.font.sm)
+            lg.printf("[Esc] to Pause", x, y + h * 0.25, w, "right")
+        elseif name == "Payout" and self.payoutMsg then
             lg.setFont(Config.font.md)
             lg.setColor(Config.color.black)
             lg.printf(self.payoutMsg, x - 2, y + h * 0.1 - 2, w, "center")
             lg.setColor(Config.color.white)
             lg.printf(self.payoutMsg, x, y + h * 0.1, w, "center")
         elseif name == "Info" then
-            lg.setFont(Config.font.md)
-            lg.setColor(Config.color.black)
-            lg.printf("[SPACE] to Spin (" .. Config.rig.cost .. "G)", x - 2, y + h * 0.1 - 2, w, "center")
-            lg.setColor(Config.color.white)
-            lg.printf("[SPACE] to Spin (" .. Config.rig.cost .. "G)", x, y + h * 0.1, w, "center")
+            if not self.rig.isSpinning then
+                lg.setFont(Config.font.md)
+                lg.setColor(Config.color.black)
+                lg.printf("[SPACE] to Spin (" .. Config.rig.cost .. "G)", x - 2, y + h * 0.1 - 2, w, "center")
+                lg.setColor(Config.color.white)
+                lg.printf("[SPACE] to Spin (" .. Config.rig.cost .. "G)", x, y + h * 0.1, w, "center")
+            else
+                lg.setFont(Config.font.md)
+                lg.setColor(Config.color.black)
+                lg.printf("Spinning Your Fate...", x - 2, y + h * 0.1 - 2, w, "center")
+                lg.setColor(Config.color.white)
+                lg.printf("Spinning Your Fate...", x, y + h * 0.1, w, "center")
+            end
         elseif name == "Player" then
             --
             -- title
@@ -274,6 +303,8 @@ function M:drawUI()
             lg.printf("THE HERO", x + ox * 5 - 2, y + oy - 2, w, "left")
             lg.setColor(Config.color.header)
             lg.printf("THE HERO", x + ox * 5, y + oy, w, "left")
+            lg.setFont(Config.font.sm)
+            lg.printf(_GAME["hp"] .. " HP", x + w * 0.1, y + h * 0.55, w, "left")
 
             -- hp
             local hpPct = math.max(0, _GAME["hp"] / 100 * 0.88)
@@ -323,16 +354,19 @@ function M:drawUI()
             lg.print("THE STORE", x + ox - 2, y + oy - 2)
             lg.setColor(Config.color.header)
             lg.print("THE STORE", x + ox, y + oy)
+            -- lg.setFont(Config.font.xs)
+            -- lg.print("NO REFUNDS!", w * 0.1, y + h * 0.5)
             lg.setFont(Config.font.xs)
-            lg.print("NO REFUNDS!", w * 0.1, y + h * 0.5)
+            lg.print("Press [1] to Buy Potion", w * 0.1, y + h * 0.35)
+            lg.print("Press [2] to Buy Shield", w * 0.1, y + h * 0.55)
 
             -- item 1
             lg.setColor(Config.color.header)
             lg.setFont(Config.font.sm)
             lg.rectangle('line', x + w * 0.475, y + h * 0.1, ox * 8, oy * 10, 5, 5)
-            lg.print("[1] - 100", x + w * 0.475, y + h * 0.775)
+            lg.print(Config.store["1"].gold .. "G", x + w * 0.525, y + h * 0.775)
             lg.rectangle('line', x + w * 0.725, y + h * 0.1, ox * 8, oy * 10, 5, 5)
-            lg.print("[2] - 500", x + w * 0.725, y + h * 0.775)
+            lg.print(Config.store["2"].gold .. "G", x + w * 0.775, y + h * 0.775)
 
             -- Potion
             if self.potionBuying.isPlaying then

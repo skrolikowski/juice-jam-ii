@@ -41,8 +41,6 @@ function M:leave()
     --
     Timer.cancel(self.shake)
     --
-    ResetGame()
-    --
     self:hideUI()
 end
 
