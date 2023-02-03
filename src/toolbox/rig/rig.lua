@@ -182,6 +182,9 @@ function M:handlePayout(symbol, tiles)
     if #tiles == metadata.min + 1 then
         -- 2x payout..?
         payoutAmount = metadata.payout * 2
+    elseif #tiles >= metadata.min + 5 then
+        -- 10x payout..?
+        payoutAmount = metadata.payout * 10
     elseif #tiles >= metadata.min + 2 then
         -- 5x payout..?
         payoutAmount = metadata.payout * 5

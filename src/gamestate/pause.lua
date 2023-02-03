@@ -87,15 +87,19 @@ function M:initUI()
 
     local x1, y1 = Plan.relative(0.025), Plan.relative(0.925)
     local x2, y2 = Plan.center(), Plan.center()
+    local x3, y3 = Plan.relative(0.775), Plan.relative(0.90)
     local w1, h1 = Plan.relative(0.20), Plan.relative(0.10)
     local w2, h2 = Plan.relative(0.40), Plan.relative(0.20)
+    local w3, h3 = Plan.relative(0.20), Plan.relative(0.10)
 
     local r1 = Rules.new():addX(x1):addY(y1):addWidth(w1):addHeight(h1)
     local r2 = Rules.new():addX(x2):addY(y2):addWidth(w2):addHeight(h2)
+    local r3 = Rules.new():addX(x3):addY(y3):addWidth(w3):addHeight(h3)
 
     self.panels = {
-        Esc    = Panel:new(r1, Config.color.clear),
+        Q      = Panel:new(r1, Config.color.clear),
         Center = Panel:new(r2, Config.color.clear),
+        Esc    = Panel:new(r3, Config.color.clear),
     }
 end
 
@@ -106,14 +110,20 @@ function M:drawUI()
         local x, y, w, h = panel:Container()
         local ox, oy     = self.offset:unpack()
 
-        if name == "Esc" then
+        if name == "Q" then
             lg.setColor(Config.color.white)
             lg.setFont(Config.font.sm)
             lg.printf("[Q] to Quit", x, y + h * 0.1, w, "left")
+            lg.setFont(Config.font.xs)
+            lg.printf("Progress is saved", x, y + h * 0.38, w, "left")
         elseif name == "Center" then
             lg.setColor(Config.color.white)
             lg.setFont(Config.font.xl)
             lg.printf("PAUSED", x + ox, y + h * 0.3 + oy, w, "center")
+        elseif name == "Esc" then
+            lg.setColor(Config.color.white)
+            lg.setFont(Config.font.sm)
+            lg.printf("[Esc] to Return", x, y + h * 0.25, w, "right")
         end
     end
 end

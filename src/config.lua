@@ -21,8 +21,8 @@ Config = {
     width = lg.getWidth(),
     height = lg.getHeight(),
     store = {
-        ["1"] = { gold = 50, payout = 100, value = "hp" },
-        ["2"] = { gold = 100, payout = 001, value = "shield" },
+        ["1"] = { gold = 100, payout = 100, value = "hp" },
+        ["2"] = { gold = 250, payout = 001, value = "shield" },
     },
     rig = {
         cost           = 5,
@@ -32,14 +32,14 @@ Config = {
         numReels       = 5,
         numRows        = 5,
         payout         = {
-            ["Coin"]    = { min = 3, payout = 003, value = "gold" },
-            ["Ingot"]   = { min = 3, payout = 005, value = "gold" },
-            ["Diamond"] = { min = 3, payout = 010, value = "gold" },
-            ["Chest"]   = { min = 3, payout = 020, value = "gold" },
-            ["Apple"]   = { min = 3, payout = 020, value = "hp" },
+            ["Coin"]    = { min = 3, payout = 005, value = "gold" },
+            ["Ingot"]   = { min = 3, payout = 010, value = "gold" },
+            ["Diamond"] = { min = 3, payout = 025, value = "gold" },
+            ["Chest"]   = { min = 3, payout = 050, value = "gold" },
+            ["Apple"]   = { min = 3, payout = 010, value = "hp" },
             ["Shield"]  = { min = 3, payout = 001, value = "shield" },
-            ["Skull"]   = { min = 3, payout = 100, value = "hit" },
-            ["Slime"]   = { min = 3, payout = 100, value = "hit" },
+            ["Skull"]   = { min = 3, payout = 020, value = "hit" },
+            ["Slime"]   = { min = 3, payout = 010, value = "hit" },
         },
         symbolWeights  = {
             {
@@ -47,13 +47,13 @@ Config = {
                 008, -- Ingot
                 005, -- Diamond
                 003, -- Chest
-                005, -- Apple
+                008, -- Apple
                 003, -- Shield
-                010, -- Skull
-                015, -- Slime
-                003, -- Book
-                003, -- Candle
-                003, -- Feather
+                005, -- Skull
+                010, -- Slime
+                001, -- Book
+                001, -- Candle
+                001, -- Feather
             },
         },
     },
