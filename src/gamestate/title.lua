@@ -157,8 +157,8 @@ function M:drawUI()
             lg.printf("[Q] to Quit", x, y + h * 0.1, w, "left")
         elseif name == "Center" then
             lg.setColor(Config.color.white)
-            lg.setFont(Config.font.md)
-            lg.printf("Juice Jam II Presents...", x, y + h * 0.05, w, "center")
+            lg.setFont(Config.font.sm)
+            lg.printf("Juice Jam II Presents...", x, y + h * 0.1, w, "center")
             lg.setFont(Config.font.xxl)
             lg.printf("SLOT RAIDER", x + ox, y + h * 0.15 + ox, w, "center")
 
@@ -189,9 +189,10 @@ function M:drawUI()
             lg.setFont(Config.font.md)
             lg.printf("CREDITS", x, y + h * 0.15, w - 32, "right")
             lg.setFont(Config.font.sm)
-            lg.printf("Art by Cainos", x, y + h * 0.4, w - 32, "right")
-            lg.printf("Backgrounds by Lornn", x, y + h * 0.6, w - 32, "right")
-            lg.printf("Audio by Shapeforms", x, y + h * 0.8, w - 32, "right")
+            lg.printf("Art by Cainos", x, y + h * 0.35, w - 32, "right")
+            lg.printf("Backgrounds by Lornn", x, y + h * 0.525, w - 32, "right")
+            lg.printf("Audio by Shapeforms", x, y + h * 0.70, w - 32, "right")
+            lg.printf("Built with Love2D", x, y + h * 0.875, w - 32, "right")
         end
     end
 end
