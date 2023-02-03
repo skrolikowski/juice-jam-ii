@@ -87,7 +87,7 @@ function M:setRow(row)
 end
 
 function M:setNewSymbol()
-    local weights      = Config.rig.symbolWeights[self.reel]
+    local weights      = Config.rig.symbolWeights[1]
     local _, randIndex = Util.WeightedChoice(weights)
 
     --

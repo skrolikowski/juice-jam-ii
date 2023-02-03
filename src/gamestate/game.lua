@@ -114,12 +114,14 @@ function M:payout(value, amount)
 
         -- award gold..
         self.coinGain:play()
+        self.payoutMsg = "You Win " .. amount .. "G!"
         _GAME[value] = _GAME[value] + amount
         --
     elseif value == "hp" then
         --
         -- award hp..
         self.heartHealing:play()
+        self.payoutMsg = "You Gain " .. amount .. "HP!"
         _GAME[value] = math.min(100, _GAME[value] + amount)
         --
     elseif value == "hit" then
@@ -127,11 +129,13 @@ function M:payout(value, amount)
             --
             -- shield heart..
             self.heartShielded:play()
+            self.payoutMsg = "Shield Lost!"
             _GAME["shield"] = _GAME["shield"] - 1
         else
             --
             -- remove hp..
             self.heartHurting:play()
+            self.payoutMsg = "You Lost " .. amount .. "HP!"
             _GAME["hp"] = math.max(0, _GAME["hp"] - amount)
         end
     elseif value == "shield" then
@@ -143,6 +147,7 @@ function M:payout(value, amount)
         end)
 
         -- award shield..
+        self.payoutMsg = "Shield Gained!"
         _GAME[value] = math.min(3, _GAME[value] + 1)
     end
 
@@ -184,6 +189,7 @@ function M:keypressed(key)
         self:onPause()
     elseif key == "space" then
         self.rig:trigger()
+        self.payoutMsg = nil
     elseif key == "1" or key == "2" then
         self:buyItem(key)
         -- elseif key == "7" then
@@ -218,21 +224,26 @@ function M:initUI()
     local x1, y1 = Plan.relative(0.01), Plan.relative(0.01)
     local x2, y2 = Plan.relative(0.80 - 0.01), Plan.relative(0.01)
     local x3, y3 = Plan.relative(0.01), Plan.relative(0.85 - 0.01)
-    -- local x4, y4 = Plan.relative(0.80 - 0.01), Plan.relative(0.85 - 0.01)
+    local x4, y4 = Plan.center(), Plan.relative(0.85 - 0.01)
+    local x5, y5 = Plan.center(), Plan.relative(0.10)
     local w1, h1 = Plan.relative(0.25), Plan.relative(0.15)
     local w2, h2 = Plan.relative(0.20), Plan.relative(0.10)
     local w3, h3 = Plan.relative(0.30), Plan.relative(0.15)
-    -- local w4, h4 = Plan.relative(0.20), Plan.relative(0.15)
+    local w4, h4 = Plan.relative(0.25), Plan.relative(0.05)
+    local w5, h5 = Plan.relative(0.25), Plan.relative(0.05)
 
     local r1 = Rules.new():addX(x1):addY(y1):addWidth(w1):addHeight(h1)
     local r2 = Rules.new():addX(x2):addY(y2):addWidth(w2):addHeight(h2)
     local r3 = Rules.new():addX(x3):addY(y3):addWidth(w3):addHeight(h3)
-    -- local r4 = Rules.new():addX(x4):addY(y4):addWidth(w4):addHeight(h4)
+    local r4 = Rules.new():addX(x4):addY(y4):addWidth(w4):addHeight(h4)
+    local r5 = Rules.new():addX(x5):addY(y5):addWidth(w5):addHeight(h5)
 
     self.panels = {
         Player = Panel:new(r1),
         Bank   = Panel:new(r2),
         Store  = Panel:new(r3),
+        Info   = Panel:new(r4),
+        Payout = Panel:new(r5)
     }
 end
 
@@ -243,7 +254,19 @@ function M:drawUI()
         local x, y, w, h = panel:Container()
         local ox, oy     = 12, 8
 
-        if name == "Player" then
+        if name == "Payout" and self.payoutMsg then
+            lg.setFont(Config.font.md)
+            lg.setColor(Config.color.black)
+            lg.printf(self.payoutMsg, x - 2, y + h * 0.1 - 2, w, "center")
+            lg.setColor(Config.color.white)
+            lg.printf(self.payoutMsg, x, y + h * 0.1, w, "center")
+        elseif name == "Info" then
+            lg.setFont(Config.font.md)
+            lg.setColor(Config.color.black)
+            lg.printf("[SPACE] to Spin (" .. Config.rig.cost .. "G)", x - 2, y + h * 0.1 - 2, w, "center")
+            lg.setColor(Config.color.white)
+            lg.printf("[SPACE] to Spin (" .. Config.rig.cost .. "G)", x, y + h * 0.1, w, "center")
+        elseif name == "Player" then
             --
             -- title
             lg.setFont(Config.font.md)

@@ -120,40 +120,27 @@ function M:handlePostSpin()
     --
     -- Delay for tiles to lock in place..
     self.timer:after(0.5 * Config.rig.numReels, function()
-        self.results = {} -- reset
+        self.matches = {} -- reset
         --
-        self:checkForScatters()
-        self:checkForSequences()
+        self:checkForPayouts()
         self:handlePayouts()
-        --
-        self.isSpinning = false
-        self:checkForGameOver()
     end)
 end
 
--- Check visible grid for scatter symbols..
--- --
--- {
---    {
---      metadata    = { min = Number, payout = Number, value = String },
---      tiles       = { Tile, Tile, ... }
---    },
---    ...
--- }
---
-function M:checkForScatters()
-    local scatters = {}
+function M:checkForPayouts()
+    local matches = {}
     for rowIndex = 2, Config.rig.numRows - 1 do
         for reelIndex = 1, Config.rig.numReels do
             local reel     = self.reels[reelIndex]
             local tile     = reel.tiles[rowIndex]
-            local metadata = Config.rig.scatters[tile.symbolIndex]
+            local metadata = Config.rig.payout[tile.symbol]
 
             if metadata then
-                if scatters[tile.symbolIndex] then
-                    table.insert(scatters[tile.symbolIndex].tiles, tile)
+                if matches[tile.symbol] then
+                    table.insert(matches[tile.symbol].tiles, tile)
                 else
-                    scatters[tile.symbolIndex] = {
+                    matches[tile.symbol] = {
+                        symbol   = tile.symbol,
                         metadata = metadata,
                         tiles    = { tile }
                     }
@@ -163,78 +150,34 @@ function M:checkForScatters()
     end
 
     --
-    for _, data in pairs(scatters) do
+    for _, data in pairs(matches) do
         if #data.tiles >= data.metadata.min then
-            table.insert(self.results, data)
+            table.insert(self.matches, data)
         end
     end
-end
-
--- Check each payline for winner..
--- --
--- {
---    {
---      metadata    = { min = Number, payout = Number, value = String },
---      tiles       = { Tile, Tile, ... }
---    },
---    ...
--- }
---
---
-function M:checkForSequences()
-    for _, payline in pairs(Config.rig.paylines) do
-        local symbolIndex, tiles = self:checkPayline(payline)
-        local metadata           = Config.rig.sequences[symbolIndex]
-
-        if metadata and #tiles >= metadata.min then
-            table.insert(self.results, {
-                metadata = metadata,
-                tiles    = tiles,
-            })
-        end
-    end
-end
-
--- Check individual payline for winner..
---
-function M:checkPayline(payline)
-    local symbolIndex
-    local tiles = {}
-
-    for reelIndex, tileIndex in pairs(payline) do
-        local reel = self.reels[reelIndex]
-        local tile = reel.tiles[tileIndex]
-
-        if not symbolIndex or symbolIndex == tile.symbolIndex then
-            --
-            -- combo tally..
-            symbolIndex = tile.symbolIndex
-            table.insert(tiles, tile)
-        else
-            --
-            -- combo broken.. exit early
-            return symbolIndex, tiles
-        end
-    end
-
-    return symbolIndex, tiles
 end
 
 function M:handlePayouts()
-    if #self.results > 0 then
-        local payout = table.remove(self.results, 1)
+    if #self.matches > 0 then
+        local match = table.remove(self.matches, 1)
+        pprint(match)
 
-        self:highlightTiles(payout.tiles)
-        self:handlePayout(payout.metadata, payout.tiles)
+        self:highlightTiles(match.tiles)
+        self:handlePayout(match.symbol, match.tiles)
 
-        self.timer:after(Config.rig.payoutDuration, function()
-            self:unhighlightTiles(payout.tiles)
-            self:handlePayouts()
-        end)
+        self.timer:after(Config.rig.payoutDuration,
+            function()
+                self:unhighlightTiles(match.tiles)
+                self:handlePayouts()
+            end)
+    else
+        self.isSpinning = false
+        self:checkForGameOver()
     end
 end
 
-function M:handlePayout(metadata, tiles)
+function M:handlePayout(symbol, tiles)
+    local metadata     = Config.rig.payout[symbol]
     local payoutAmount = metadata.payout
     local payoutValue  = metadata.value
 

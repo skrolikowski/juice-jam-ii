@@ -38,14 +38,14 @@ require "src.ui"
 -- Load Game
 --
 function love.load()
-    -- LoadGame()
+    LoadGame()
     --
     Config.particles.AwardingShield:stop()
     Config.particles.MouseCoins:stop()
     Config.particles.RainingCoins:stop()
     --
     Gamestate.registerEvents()
-    Gamestate.switch(Gamestates['title'])
+    Gamestate.switch(Gamestates['game'])
 end
 
 -- Update Timer
@@ -83,7 +83,7 @@ end
 
 function ResetGame()
     _GAME = Saver:save('juice-jam-ii', {
-        gold   = 500,
+        gold   = 50,
         hp     = 100,
         shield = 1,
         volume = _GAME and _GAME.volume or 1,

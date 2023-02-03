@@ -25,87 +25,34 @@ Config = {
         ["2"] = { gold = 500, payout = 001, value = "shield" },
     },
     rig = {
-        cost           = 50,
+        cost           = 5,
         payoutDuration = 2.5,
         juiceDuration  = 2,
         spinLength     = 1.5,
         numReels       = 5,
         numRows        = 5,
-        paylines       = {
-            { 2, 2, 2, 2, 2 },
-            { 3, 3, 3, 3, 3 },
-            { 4, 4, 4, 4, 4 },
-            { 2, 3, 4, 3, 2 },
-            { 4, 3, 2, 3, 4 },
-            { 2, 2, 3, 4, 4 },
-            { 4, 4, 3, 2, 2 },
-        },
-        sequences      = {
-            [1] = { min = 3, payout = 050, value = "gold" },
-            [2] = { min = 3, payout = 100, value = "gold" },
-        },
-        scatters       = {
-            [3] = { min = 3, payout = 250, value = "gold" },
-            [4] = { min = 3, payout = 025, value = "hp" },
-            [5] = { min = 3, payout = 001, value = "shield" },
-            [6] = { min = 3, payout = 010, value = "hit" },
+        payout         = {
+            ["Coin"]    = { min = 3, payout = 001, value = "gold" },
+            ["Ingot"]   = { min = 3, payout = 005, value = "gold" },
+            ["Diamond"] = { min = 3, payout = 010, value = "gold" },
+            ["Chest"]   = { min = 3, payout = 020, value = "gold" },
+            ["Apple"]   = { min = 3, payout = 020, value = "hp" },
+            ["Shield"]  = { min = 3, payout = 001, value = "shield" },
+            ["Skull"]   = { min = 3, payout = 010, value = "hit" },
         },
         symbolWeights  = {
             {
-                030, -- Coin
-                010, -- Diamond
-                003, -- Chest
-                005, -- Apple
-                003, -- Shield
-                008, -- Skull
-                002, -- Book
-                002, -- Candle
-                002, -- Feather
-            },
-            {
-                030, -- Coin
-                010, -- Diamond
-                003, -- Chest
-                005, -- Apple
-                003, -- Shield
-                008, -- Skull
-                002, -- Book
-                002, -- Candle
-                002, -- Feather
-            },
-            {
-                025, -- Coin
-                010, -- Diamond
-                005, -- Chest
-                005, -- Apple
-                003, -- Shield
-                015, -- Skull
-                002, -- Book
-                002, -- Candle
-                002, -- Feather
-            },
-            {
                 015, -- Coin
+                010, -- Ingot
                 005, -- Diamond
-                005, -- Chest
+                003, -- Chest
                 005, -- Apple
-                005, -- Shield
+                003, -- Shield
                 015, -- Skull
-                002, -- Book
-                002, -- Candle
-                002, -- Feather
+                005, -- Book
+                005, -- Candle
+                005, -- Feather
             },
-            {
-                010, -- Coin
-                005, -- Diamond
-                005, -- Chest
-                005, -- Apple
-                005, -- Shield
-                015, -- Skull
-                002, -- Book
-                002, -- Candle
-                002, -- Feather
-            }
         },
     },
     particles = {
@@ -156,6 +103,7 @@ Config = {
         rules  = lg.newImage('res/image/rules.png'),
         symbol = {
             "Coin",
+            "Ingot",
             "Diamond",
             "Chest",
             "Apple",
