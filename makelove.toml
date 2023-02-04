@@ -1,0 +1,45 @@
+name = "Slot Raider"
+default_targets = ["win32", "win64", "macos"]
+build_directory = "/Users/shanekrolikowski/Code/Love2D/juice-jam-ii/dist"
+love_version = "11.4"
+love_files = [
+    "::git-ls-tree::",
+    "-*/.*",
+]
+
+[hooks]
+#postbuild = [
+#	"butler push '{build_directory}/win32/Slot Raider-win32.zip' skrolikowski/slot-raider:win32 --userversion 1.0.0",
+#    "butler push '{build_directory}/win32/Slot Raider-win64.zip' skrolikowski/slot-raider:win64 --userversion 1.0.0",
+#    "butler push '{build_directory}/win32/Slot Raider-osx.zip' skrolikowski/slot-raider:osx --userversion 1.0.0",
+#]
+
+
+[windows]
+
+# Exe metadata is specified as a version string (key) and it's value
+# The values shown here are the ones set by makelove by default (you can overwrite them here)
+# and the values in the comments are the original values in love.exe
+# If you are not doing a versioned build, {version} is empty.
+[windows.exe_metadata]
+FileDescription = "{name} 1.0.0"
+FileVersion = "1.0.0"
+CompanyName = "Shane Krolikowski"
+LegalCopyright = "Copyright © 2022 - Shane Krolikowski"
+ProductName = "{name}"
+ProductVersion = "<same as FileVersion>"
+OriginalFilename = "<name of the generated .exe>" # "love.exe"
+
+[win32]
+love_binaries = "/Users/shanekrolikowski/Downloads/love-binaries/love-11.4-win32"
+
+[win64]
+love_binaries = "/Users/shanekrolikowski/Downloads/love-binaries/love-11.4-win64"
+
+[macos]
+
+[macos.app_metadata]
+CFBundleName = "Slot Raider"
+CFBundleIdentifier = "com.skrolikowski.slot-raider"
+NSHumanReadableCopyright = "Copyright © 2022 - Shane Krolikowski"
+CFBundleShortVersionString = "1.0.0"

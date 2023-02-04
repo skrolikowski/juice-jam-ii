@@ -4,18 +4,18 @@ package.path = package.path .. ";lib/?.lua;lib/?/init.lua"
 function love.conf(t)
     io.stdout:setvbuf('no')
 
-    t.identity = 'game'
+    t.identity = 'juice-jam-ii'
     t.version  = '11.4'
     t.console  = false
 
-    t.window.title      = "Juice Jam II"
-    t.window.x          = 200
-    t.window.y          = 50
+    t.window.title      = "Slot Raider"
+    t.window.x          = 100
+    t.window.y          = 100
     t.window.width      = 1400
     t.window.height     = 800
-    t.window.resizable  = true
+    t.window.resizable  = false
     t.window.fullscreen = false
-    t.window.borderless = false
+    t.window.borderless = true
     t.window.highdpi    = true
     t.window.vsync      = true
 
